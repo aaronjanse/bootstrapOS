@@ -1,11 +1,13 @@
-with import <nixpkgs> {
-  crossSystem = {
-    config = "aarch64-none-elf";
-    libc = "newlib";
-  };
-};
+with import <nixpkgs> {};
 
 mkShell {
-  buildInputs = [ ];
+  buildInputs = with pkgs; [
+    pkgsCross.aarch64-embedded.stdenv.cc
+    (callPackage ./qemu {
+      inherit (darwin.apple_sdk.frameworks) CoreServices Cocoa Hypervisor;
+      inherit (darwin.stubs) rez setfile;
+      python = python3;
+    })
+  ];
 }
 
