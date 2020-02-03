@@ -1,0 +1,917 @@
+diff --git a/block/qapi.c b/block/qapi.c
+index 917435f0..601ca604 100644
+--- a/block/qapi.c
++++ b/block/qapi.c
+@@ -23,7 +23,7 @@
+  */
+ 
+ #include "qemu/osdep.h"
+-#include "qemu-common.h"
++#include "qemu/cutils.h"
+ #include "block/qapi.h"
+ #include "block/block_int.h"
+ #include "block/throttle-groups.h"
+diff --git a/hw/arm/bcm2835_peripherals.c b/hw/arm/bcm2835_peripherals.c
+index 8984e2e9..72287d59 100644
+--- a/hw/arm/bcm2835_peripherals.c
++++ b/hw/arm/bcm2835_peripherals.c
+@@ -22,6 +22,20 @@
+ /* Capabilities for SD controller: no DMA, high-speed, default clocks etc. */
+ #define BCM2835_SDHC_CAPAREG 0x52134b4
+ 
++static void create_unimp(BCM2835PeripheralState *ps,
++                         UnimplementedDeviceState *uds,
++                         const char *name, hwaddr ofs, hwaddr size)
++{
++    sysbus_init_child_obj(OBJECT(ps), name, uds,
++                          sizeof(UnimplementedDeviceState),
++                          TYPE_UNIMPLEMENTED_DEVICE);
++    qdev_prop_set_string(DEVICE(uds), "name", name);
++    qdev_prop_set_uint64(DEVICE(uds), "size", size);
++    object_property_set_bool(OBJECT(uds), true, "realized", &error_fatal);
++    memory_region_add_subregion(&ps->peri_mr, ofs,
++                                sysbus_mmio_get_region(SYS_BUS_DEVICE(uds), 0));
++}
++
+ static void bcm2835_peripherals_init(Object *obj)
+ {
+     BCM2835PeripheralState *s = BCM2835_PERIPHERALS(obj);
+@@ -175,7 +189,7 @@ static void bcm2835_peripherals_realize(DeviceState *dev, Error **errp)
+         return;
+     }
+ 
+-    memory_region_add_subregion(&s->peri_mr, UART1_OFFSET,
++    memory_region_add_subregion(&s->peri_mr, AUX_OFFSET,
+                 sysbus_mmio_get_region(SYS_BUS_DEVICE(&s->aux), 0));
+     sysbus_connect_irq(SYS_BUS_DEVICE(&s->aux), 0,
+         qdev_get_gpio_in_named(DEVICE(&s->ic), BCM2835_IC_GPU_IRQ,
+@@ -268,7 +282,7 @@ static void bcm2835_peripherals_realize(DeviceState *dev, Error **errp)
+         return;
+     }
+ 
+-    memory_region_add_subregion(&s->peri_mr, EMMC_OFFSET,
++    memory_region_add_subregion(&s->peri_mr, EMMC1_OFFSET,
+                 sysbus_mmio_get_region(SYS_BUS_DEVICE(&s->sdhci), 0));
+     sysbus_connect_irq(SYS_BUS_DEVICE(&s->sdhci), 0,
+         qdev_get_gpio_in_named(DEVICE(&s->ic), BCM2835_IC_GPU_IRQ,
+@@ -322,6 +336,37 @@ static void bcm2835_peripherals_realize(DeviceState *dev, Error **errp)
+         error_propagate(errp, err);
+         return;
+     }
++
++    create_unimp(s, &s->pm, "bcm2835-pm", PM_OFFSET, 0x1000);
++    create_unimp(s, &s->cprman, "bcm2835-cprman", CPRMAN_OFFSET, 0x1000);
++    create_unimp(s, &s->a2w, "bcm2835-a2w", 0x102000, 0x1000);
++    create_unimp(s, &s->i2s, "bcm2835-i2s", I2S_OFFSET, 0x100);
++    create_unimp(s, &s->smi, "bcm2835-smi", SMI_OFFSET, 0x100);
++    create_unimp(s, &s->uartu[2], "!pl011[2]", UART2_OFFSET, 0x100);
++    create_unimp(s, &s->uartu[3], "!pl011[3]", UART3_OFFSET, 0x100);
++    create_unimp(s, &s->uartu[4], "!pl011[4]", UART4_OFFSET, 0x100);
++    create_unimp(s, &s->uartu[5], "!pl011[5]", UART5_OFFSET, 0x100);
++    create_unimp(s, &s->spi[0], "bcm2835-spi[0]", SPI0_OFFSET, 0x20);
++    create_unimp(s, &s->spi[3], "bcm2835-spi[3]", SPI3_OFFSET, 0x20);
++    create_unimp(s, &s->spi[4], "bcm2835-spi[4]", SPI4_OFFSET, 0x20);
++    create_unimp(s, &s->spi[5], "bcm2835-spi[5]", SPI5_OFFSET, 0x20);
++    create_unimp(s, &s->spi[6], "bcm2835-spi[6]", SPI6_OFFSET, 0x20);
++    create_unimp(s, &s->bscsl, "bcm2835-spis", BSC_SL_OFFSET, 0x100);
++    create_unimp(s, &s->i2c[0], "bcm2835-i2c[0]", BSC0_OFFSET, 0x20);
++    create_unimp(s, &s->i2c[1], "bcm2835-i2c[1]", BSC1_OFFSET, 0x20);
++    create_unimp(s, &s->i2c[2], "bcm2835-i2c[2]", BSC2_OFFSET, 0x20);
++    create_unimp(s, &s->i2c[3], "bcm2835-i2c[3]", BSC3_OFFSET, 0x20);
++    create_unimp(s, &s->i2c[4], "bcm2835-i2c[4]", BSC4_OFFSET, 0x20);
++    create_unimp(s, &s->i2c[5], "bcm2835-i2c[5]", BSC5_OFFSET, 0x20);
++    create_unimp(s, &s->i2c[6], "bcm2835-i2c[6]", BSC6_OFFSET, 0x20);
++    create_unimp(s, &s->otp, "bcm2835-otp", OTP_OFFSET, 0x80);
++    create_unimp(s, &s->dbus, "bcm2835-dbus", DBUS_OFFSET, 0x8000);
++    create_unimp(s, &s->ave0, "bcm2835-ave0", AVE0_OFFSET, 0x8000);
++    create_unimp(s, &s->dwc2, "dwc-usb2", USB_OTG_OFFSET, 0x100);
++    create_unimp(s, &s->xhci, "bcm2838-xhci", USB_XHCI_OFFSET, 0x100000);
++    create_unimp(s, &s->argon, "bcm2838-argon", ARGON_OFFSET, 4 * 0x10000);
++    create_unimp(s, &s->v3d, "bcm2835-v3d", V3D_OFFSET, 0x10000);
++    create_unimp(s, &s->sdramc, "bcm2835-sdramc", SDRAMC_OFFSET, 0x100);
+ }
+ 
+ static void bcm2835_peripherals_class_init(ObjectClass *oc, void *data)
+diff --git a/hw/arm/bcm2836.c b/hw/arm/bcm2836.c
+index 493a913f..19b880b4 100644
+--- a/hw/arm/bcm2836.c
++++ b/hw/arm/bcm2836.c
+@@ -15,16 +15,14 @@
+ #include "hw/arm/bcm2836.h"
+ #include "hw/arm/raspi_platform.h"
+ #include "hw/sysbus.h"
+-
+-/* Peripheral base address seen by the CPU */
+-#define BCM2836_PERI_BASE       0x3F000000
+-
+-/* "QA7" (Pi2) interrupt controller and mailboxes etc. */
+-#define BCM2836_CONTROL_BASE    0x40000000
++#include "hw/misc/unimp.h"
+ 
+ struct BCM283XInfo {
+     const char *name;
+     const char *cpu_type;
++    hwaddr peri_base; /* Peripheral base address seen by the CPU */
++    hwaddr ctrl_base; /* Interrupt controller and mailboxes etc. */
++    hwaddr gic_base;
+     int clusterid;
+ };
+ 
+@@ -32,17 +30,39 @@ static const BCM283XInfo bcm283x_socs[] = {
+     {
+         .name = TYPE_BCM2836,
+         .cpu_type = ARM_CPU_TYPE_NAME("cortex-a7"),
++        .peri_base = 0x3f000000,
++        .ctrl_base = 0x40000000,
+         .clusterid = 0xf,
+     },
+ #ifdef TARGET_AARCH64
+     {
+         .name = TYPE_BCM2837,
+         .cpu_type = ARM_CPU_TYPE_NAME("cortex-a53"),
++        .peri_base = 0x3f000000,
++        .ctrl_base = 0x40000000,
+         .clusterid = 0x0,
+     },
++    {
++        .name = TYPE_BCM2838,
++        .cpu_type = ARM_CPU_TYPE_NAME("cortex-a72"),
++        .peri_base = 0xfe000000,
++        .ctrl_base = 0xff800000,
++        .gic_base = 0x40000,
++    },
+ #endif
+ };
+ 
++#define GIC_NUM_IRQS                256
++
++#define GIC_BASE_OFS                0x0000
++#define GIC_DIST_OFS                0x1000
++#define GIC_CPU_OFS                 0x2000
++#define GIC_VIFACE_THIS_OFS         0x4000
++#define GIC_VIFACE_OTHER_OFS(cpu)  (0x5000 + (cpu) * 0x200)
++#define GIC_VCPU_OFS                0x6000
++
++#define PCIE_BASE                   0x7d500000
++
+ static void bcm2836_init(Object *obj)
+ {
+     BCM283XState *s = BCM283X(obj);
+@@ -55,6 +75,11 @@ static void bcm2836_init(Object *obj)
+                                 info->cpu_type, &error_abort, NULL);
+     }
+ 
++    if (info->gic_base) {
++      sysbus_init_child_obj(obj, "gic", &s->gic, sizeof(s->gic),
++                            TYPE_ARM_GIC);
++    }
++
+     sysbus_init_child_obj(obj, "control", &s->control, sizeof(s->control),
+                           TYPE_BCM2836_CONTROL);
+ 
+@@ -104,7 +129,7 @@ static void bcm2836_realize(DeviceState *dev, Error **errp)
+     }
+ 
+     sysbus_mmio_map_overlap(SYS_BUS_DEVICE(&s->peripherals), 0,
+-                            BCM2836_PERI_BASE, 1);
++                            info->peri_base, 1);
+ 
+     /* bcm2836 interrupt controller (and mailboxes, etc.) */
+     object_property_set_bool(OBJECT(&s->control), true, "realized", &err);
+@@ -113,7 +138,61 @@ static void bcm2836_realize(DeviceState *dev, Error **errp)
+         return;
+     }
+ 
+-    sysbus_mmio_map(SYS_BUS_DEVICE(&s->control), 0, BCM2836_CONTROL_BASE);
++    sysbus_mmio_map(SYS_BUS_DEVICE(&s->control), 0, info->ctrl_base);
++
++    /* bcm2838 GICv2 */
++    if (info->gic_base) {
++        object_property_set_uint(OBJECT(&s->gic), 2, "revision", &err);
++        if (err) {
++            error_propagate(errp, err);
++            return;
++        }
++
++        object_property_set_uint(OBJECT(&s->gic),
++                                 BCM283X_NCPUS, "num-cpu", &err);
++        if (err) {
++            error_propagate(errp, err);
++            return;
++        }
++
++        object_property_set_uint(OBJECT(&s->gic),
++                                 32 + GIC_NUM_IRQS, "num-irq", &err);
++        if (err) {
++            error_propagate(errp, err);
++            return;
++        }
++
++        object_property_set_bool(OBJECT(&s->gic),
++                                 true, "has-virtualization-extensions", &err);
++        if (err) {
++            error_propagate(errp, err);
++            return;
++        }
++
++        object_property_set_bool(OBJECT(&s->gic), true, "realized", &err);
++        if (err) {
++            error_propagate(errp, err);
++            return;
++        }
++
++        sysbus_mmio_map(SYS_BUS_DEVICE(&s->gic), 0,
++                        info->ctrl_base + info->gic_base + GIC_DIST_OFS);
++        sysbus_mmio_map(SYS_BUS_DEVICE(&s->gic), 1,
++                        info->ctrl_base + info->gic_base + GIC_CPU_OFS);
++        sysbus_mmio_map(SYS_BUS_DEVICE(&s->gic), 2,
++                        info->ctrl_base + info->gic_base + GIC_VIFACE_THIS_OFS);
++        sysbus_mmio_map(SYS_BUS_DEVICE(&s->gic), 3,
++                        info->ctrl_base + info->gic_base + GIC_VCPU_OFS);
++
++        for (n = 0; n < BCM283X_NCPUS; n++) {
++            sysbus_mmio_map(SYS_BUS_DEVICE(&s->gic), 4 + n,
++                            info->ctrl_base + info->gic_base
++                            + GIC_VIFACE_OTHER_OFS(n));
++        }
++
++        /* TODO wire IRQs!!! */
++    }
++
+ 
+     sysbus_connect_irq(SYS_BUS_DEVICE(&s->peripherals), 0,
+         qdev_get_gpio_in_named(DEVICE(&s->control), "gpu-irq", 0));
+@@ -126,7 +205,7 @@ static void bcm2836_realize(DeviceState *dev, Error **errp)
+ 
+         /* set periphbase/CBAR value for CPU-local registers */
+         object_property_set_int(OBJECT(&s->cpus[n]),
+-                                BCM2836_PERI_BASE + MCORE_OFFSET,
++                                info->peri_base,
+                                 "reset-cbar", &err);
+         if (err) {
+             error_propagate(errp, err);
+@@ -163,6 +242,13 @@ static void bcm2836_realize(DeviceState *dev, Error **errp)
+         qdev_connect_gpio_out(DEVICE(&s->cpus[n]), GTIMER_SEC,
+                 qdev_get_gpio_in_named(DEVICE(&s->control), "cntpsirq", n));
+     }
++
++    /* bcm2838 kludge to easily create PCIe */
++    if (info->gic_base) {
++        create_unimplemented_device("bcm2838-pcie", PCIE_BASE, 0x100000);
++        create_unimplemented_device("bcm54213-geth",
++                                    PCIE_BASE + 0x80000, 0x10000);
++    }
+ }
+ 
+ static Property bcm2836_props[] = {
+diff --git a/hw/arm/raspi.c b/hw/arm/raspi.c
+index 5b2620ac..2ef15745 100644
+--- a/hw/arm/raspi.c
++++ b/hw/arm/raspi.c
+@@ -13,6 +13,7 @@
+ 
+ #include "qemu/osdep.h"
+ #include "qemu/units.h"
++#include "qemu/cutils.h"
+ #include "qapi/error.h"
+ #include "cpu.h"
+ #include "hw/arm/bcm2836.h"
+@@ -29,8 +30,76 @@
+ #define FIRMWARE_ADDR_3 0x80000 /* Pi 3 loads kernel.img here by default */
+ #define SPINTABLE_ADDR  0xd8 /* Pi 3 bootloader spintable */
+ 
+-/* Table of Linux board IDs for different Pi versions */
+-static const int raspi_boardid[] = {[1] = 0xc42, [2] = 0xc43, [3] = 0xc44};
++enum BoardIdManufacturer {
++    M_SONY_UK = 0,
++    M_EMBEST = 2,
++};
++
++enum BoardIdChip {
++    C_BCM2835 = 0,
++    C_BCM2836 = 1,
++    C_BCM2837 = 2,
++    C_BCM2711 = 3,
++};
++
++enum BoardIdType {
++    T_2B = 0x04,
++    T_3B = 0x08,
++    T_4B = 0x11,
++};
++
++enum BoardIdRevision {
++    R_1_0 = 0,
++    R_1_1 = 1,
++    R_1_2 = 2,
++    R_1_3 = 3,
++};
++
++static const char *processor_typename[] = {
++    [C_BCM2836] = TYPE_BCM2836,
++    [C_BCM2837] = TYPE_BCM2837,
++    [C_BCM2711] = TYPE_BCM2838,
++};
++
++typedef struct BoardInfo BoardInfo;
++
++struct BoardInfo {
++    /* Table of Linux board IDs for different Pi versions */
++    int board_id;
++    /*
++     * Board revision codes:
++     * www.raspberrypi.org/documentation/hardware/raspberrypi/revision-codes/
++     */
++    struct {
++        enum BoardIdType type;
++        enum BoardIdRevision revision;
++        enum BoardIdChip chip;
++        enum BoardIdManufacturer manufacturer;
++    } board_rev;
++    uint64_t ram_size_min;
++    uint64_t ram_size_max;
++};
++
++static const BoardInfo bcm283x_boards[] = {
++    [2] = {
++        .board_id = 0xc43,
++        .board_rev = { T_2B, R_1_1, C_BCM2836, M_EMBEST },
++        .ram_size_min = 1 * GiB,
++        .ram_size_max = 1 * GiB,
++    },
++    [3] = {
++        .board_id = 0xc44,
++        .board_rev = { T_3B, R_1_2, C_BCM2837, M_SONY_UK },
++        .ram_size_min = 1 * GiB,
++        .ram_size_max = 1 * GiB,
++    },
++    [4] = {
++        .board_id = 0xc42,
++        .board_rev = { T_4B, R_1_1, C_BCM2711, M_SONY_UK },
++        .ram_size_min = 1 * GiB,
++        .ram_size_max = 4 * GiB,
++    },
++};
+ 
+ typedef struct RasPiState {
+     BCM283XState soc;
+@@ -114,7 +183,7 @@ static void setup_boot(MachineState *machine, int version, size_t ram_size)
+     static struct arm_boot_info binfo;
+     int r;
+ 
+-    binfo.board_id = raspi_boardid[version];
++    binfo.board_id = bcm283x_boards[version].board_id;
+     binfo.ram_size = ram_size;
+     binfo.nb_cpus = machine->smp.cpus;
+ 
+@@ -146,7 +215,7 @@ static void setup_boot(MachineState *machine, int version, size_t ram_size)
+      * the normal Linux boot process
+      */
+     if (machine->firmware) {
+-        hwaddr firmware_addr = version == 3 ? FIRMWARE_ADDR_3 : FIRMWARE_ADDR_2;
++        hwaddr firmware_addr = version >= 3 ? FIRMWARE_ADDR_3 : FIRMWARE_ADDR_2;
+         /* load the firmware image (typically kernel.img) */
+         r = load_image_targphys(machine->firmware, firmware_addr,
+                                 ram_size - firmware_addr);
+@@ -174,16 +243,32 @@ static void raspi_init(MachineState *machine, int version)
+     BlockBackend *blk;
+     BusState *bus;
+     DeviceState *carddev;
++    char *size_str;
++    int board_rev;
++    const char *soc_type;
+ 
+-    if (machine->ram_size > 1 * GiB) {
++    if (machine->ram_size < bcm283x_boards[version].ram_size_min) {
++        size_str = size_to_str(bcm283x_boards[version].ram_size_min);
++        error_report("Requested ram size is too small for this machine: "
++                     "minimum is %s", size_str);
++        g_free(size_str);
++        exit(1);
++    }
++    if (machine->ram_size > bcm283x_boards[version].ram_size_max) {
++        size_str = size_to_str(bcm283x_boards[version].ram_size_max);
+         error_report("Requested ram size is too large for this machine: "
+-                     "maximum is 1GB");
++                     "maximum is %s", size_str);
++        g_free(size_str);
++        exit(1);
++    }
++    if (!is_power_of_2(machine->ram_size)) {
++        error_report("Requested ram size is not a power of 2");
+         exit(1);
+     }
+ 
++    soc_type = processor_typename[bcm283x_boards[version].board_rev.chip];
+     object_initialize_child(OBJECT(machine), "soc", &s->soc, sizeof(s->soc),
+-                            version == 3 ? TYPE_BCM2837 : TYPE_BCM2836,
+-                            &error_abort, NULL);
++                            soc_type, &error_abort, NULL);
+ 
+     /* Allocate and map RAM */
+     memory_region_allocate_system_memory(&s->ram, OBJECT(machine), "ram",
+@@ -196,9 +281,14 @@ static void raspi_init(MachineState *machine, int version)
+                                    &error_abort);
+     object_property_set_int(OBJECT(&s->soc), machine->smp.cpus, "enabled-cpus",
+                             &error_abort);
+-    int board_rev = version == 3 ? 0xa02082 : 0xa21041;
+-    object_property_set_int(OBJECT(&s->soc), board_rev, "board-rev",
+-                            &error_abort);
++
++    board_rev = ((63 - clz64(machine->ram_size / MiB)) << 20)
++                | (bcm283x_boards[version].board_rev.manufacturer << 16)
++                | (bcm283x_boards[version].board_rev.chip << 12)
++                | (bcm283x_boards[version].board_rev.type << 4)
++                | (bcm283x_boards[version].board_rev.revision << 0);
++    object_property_set_int(OBJECT(&s->soc), board_rev,
++                            "board-rev", &error_abort);
+     object_property_set_bool(OBJECT(&s->soc), true, "realized", &error_abort);
+ 
+     /* Create and plug in the SD cards */
+@@ -225,7 +315,7 @@ static void raspi2_init(MachineState *machine)
+ 
+ static void raspi2_machine_init(MachineClass *mc)
+ {
+-    mc->desc = "Raspberry Pi 2";
++    mc->desc = "Raspberry Pi 2B";
+     mc->init = raspi2_init;
+     mc->block_default_type = IF_SD;
+     mc->no_parallel = 1;
+@@ -234,7 +324,7 @@ static void raspi2_machine_init(MachineClass *mc)
+     mc->max_cpus = BCM283X_NCPUS;
+     mc->min_cpus = BCM283X_NCPUS;
+     mc->default_cpus = BCM283X_NCPUS;
+-    mc->default_ram_size = 1024 * 1024 * 1024;
++    mc->default_ram_size = 1 * GiB;
+     mc->ignore_memory_transaction_failures = true;
+ };
+ DEFINE_MACHINE("raspi2", raspi2_machine_init)
+@@ -247,7 +337,7 @@ static void raspi3_init(MachineState *machine)
+ 
+ static void raspi3_machine_init(MachineClass *mc)
+ {
+-    mc->desc = "Raspberry Pi 3";
++    mc->desc = "Raspberry Pi 3B";
+     mc->init = raspi3_init;
+     mc->block_default_type = IF_SD;
+     mc->no_parallel = 1;
+@@ -256,7 +346,27 @@ static void raspi3_machine_init(MachineClass *mc)
+     mc->max_cpus = BCM283X_NCPUS;
+     mc->min_cpus = BCM283X_NCPUS;
+     mc->default_cpus = BCM283X_NCPUS;
+-    mc->default_ram_size = 1024 * 1024 * 1024;
++    mc->default_ram_size = 1 * GiB;
+ }
+ DEFINE_MACHINE("raspi3", raspi3_machine_init)
+-#endif
++
++static void raspi4_init(MachineState *machine)
++{
++    raspi_init(machine, 4);
++}
++
++static void raspi4_machine_init(MachineClass *mc)
++{
++    mc->desc = "Raspberry Pi 4B";
++    mc->init = raspi4_init;
++    mc->block_default_type = IF_SD;
++    mc->no_parallel = 1;
++    mc->no_floppy = 1;
++    mc->no_cdrom = 1;
++    mc->max_cpus = BCM283X_NCPUS;
++    mc->min_cpus = BCM283X_NCPUS;
++    mc->default_cpus = BCM283X_NCPUS;
++    mc->default_ram_size = 1 * GiB;
++}
++DEFINE_MACHINE("raspi4", raspi4_machine_init)
++#endif /* TARGET_AARCH64 */
+diff --git a/hw/char/bcm2835_aux.c b/hw/char/bcm2835_aux.c
+index 94679d27..43b84cd1 100644
+--- a/hw/char/bcm2835_aux.c
++++ b/hw/char/bcm2835_aux.c
+@@ -159,8 +159,9 @@ static void bcm2835_aux_write(void *opaque, hwaddr offset, uint64_t value,
+     switch (offset) {
+     case AUX_ENABLES:
+         if (value != 1) {
+-            qemu_log_mask(LOG_UNIMP, "%s: unsupported attempt to enable SPI "
+-                          "or disable UART\n", __func__);
++            qemu_log_mask(LOG_UNIMP, "%s: unsupported attempt to enable SPI"
++                                     " or disable UART: 0x%"PRIx64"\n",
++                          __func__, value);
+         }
+         break;
+ 
+diff --git a/hw/display/bcm2835_fb.c b/hw/display/bcm2835_fb.c
+index 2311ec75..96ec6b8b 100644
+--- a/hw/display/bcm2835_fb.c
++++ b/hw/display/bcm2835_fb.c
+@@ -421,7 +421,7 @@ static void bcm2835_fb_realize(DeviceState *dev, Error **errp)
+     s->initial_config.base = s->vcram_base + BCM2835_FB_OFFSET;
+ 
+     s->dma_mr = MEMORY_REGION(obj);
+-    address_space_init(&s->dma_as, s->dma_mr, NULL);
++    address_space_init(&s->dma_as, s->dma_mr, TYPE_BCM2835_FB "-memory");
+ 
+     bcm2835_fb_reset(dev);
+ 
+diff --git a/hw/dma/bcm2835_dma.c b/hw/dma/bcm2835_dma.c
+index a39e8f49..07707821 100644
+--- a/hw/dma/bcm2835_dma.c
++++ b/hw/dma/bcm2835_dma.c
+@@ -178,7 +178,7 @@ static uint64_t bcm2835_dma_read(BCM2835DMAState *s, hwaddr offset,
+         res = ch->debug;
+         break;
+     default:
+-        qemu_log_mask(LOG_GUEST_ERROR, "%s: Bad offset %"HWADDR_PRIx"\n",
++        qemu_log_mask(LOG_GUEST_ERROR, "%s: Bad offset 0x%"HWADDR_PRIx"\n",
+                       __func__, offset);
+         break;
+     }
+@@ -226,7 +226,7 @@ static void bcm2835_dma_write(BCM2835DMAState *s, hwaddr offset,
+         ch->debug = value;
+         break;
+     default:
+-        qemu_log_mask(LOG_GUEST_ERROR, "%s: Bad offset %"HWADDR_PRIx"\n",
++        qemu_log_mask(LOG_GUEST_ERROR, "%s: Bad offset 0x%"HWADDR_PRIx"\n",
+                       __func__, offset);
+         break;
+     }
+@@ -245,7 +245,7 @@ static uint64_t bcm2835_dma0_read(void *opaque, hwaddr offset, unsigned size)
+         case BCM2708_DMA_ENABLE:
+             return s->enable;
+         default:
+-            qemu_log_mask(LOG_GUEST_ERROR, "%s: Bad offset %"HWADDR_PRIx"\n",
++            qemu_log_mask(LOG_GUEST_ERROR, "%s: Bad offset 0x%"HWADDR_PRIx"\n",
+                           __func__, offset);
+             return 0;
+         }
+@@ -272,7 +272,7 @@ static void bcm2835_dma0_write(void *opaque, hwaddr offset, uint64_t value,
+             s->enable = (value & 0xffff);
+             break;
+         default:
+-            qemu_log_mask(LOG_GUEST_ERROR, "%s: Bad offset %"HWADDR_PRIx"\n",
++            qemu_log_mask(LOG_GUEST_ERROR, "%s: Bad offset 0x%"HWADDR_PRIx"\n",
+                           __func__, offset);
+         }
+     }
+@@ -381,7 +381,7 @@ static void bcm2835_dma_realize(DeviceState *dev, Error **errp)
+     }
+ 
+     s->dma_mr = MEMORY_REGION(obj);
+-    address_space_init(&s->dma_as, s->dma_mr, NULL);
++    address_space_init(&s->dma_as, s->dma_mr, TYPE_BCM2835_DMA "-memory");
+ 
+     bcm2835_dma_reset(dev);
+ }
+diff --git a/hw/intc/bcm2836_control.c b/hw/intc/bcm2836_control.c
+index 66417c85..4b55e38c 100644
+--- a/hw/intc/bcm2836_control.c
++++ b/hw/intc/bcm2836_control.c
+@@ -262,7 +262,7 @@ static uint64_t bcm2836_control_read(void *opaque, hwaddr offset, unsigned size)
+     } else if (offset >= REG_MBOX0_RDCLR && offset < REG_LIMIT) {
+         return s->mailboxes[(offset - REG_MBOX0_RDCLR) >> 2];
+     } else {
+-        qemu_log_mask(LOG_GUEST_ERROR, "%s: Bad offset %"HWADDR_PRIx"\n",
++        qemu_log_mask(LOG_UNIMP, "%s: Unsupported offset 0x%"HWADDR_PRIx"\n",
+                       __func__, offset);
+         return 0;
+     }
+@@ -291,8 +291,9 @@ static void bcm2836_control_write(void *opaque, hwaddr offset,
+     } else if (offset >= REG_MBOX0_RDCLR && offset < REG_LIMIT) {
+         s->mailboxes[(offset - REG_MBOX0_RDCLR) >> 2] &= ~val;
+     } else {
+-        qemu_log_mask(LOG_GUEST_ERROR, "%s: Bad offset %"HWADDR_PRIx"\n",
+-                      __func__, offset);
++        qemu_log_mask(LOG_UNIMP, "%s: Unsupported offset 0x%"HWADDR_PRIx
++                                 " value 0x%"PRIx64"\n",
++                      __func__, offset, val);
+         return;
+     }
+ 
+diff --git a/hw/misc/bcm2835_mbox.c b/hw/misc/bcm2835_mbox.c
+index a87da5ee..d22beb7f 100644
+--- a/hw/misc/bcm2835_mbox.c
++++ b/hw/misc/bcm2835_mbox.c
+@@ -174,7 +174,7 @@ static uint64_t bcm2835_mbox_read(void *opaque, hwaddr offset, unsigned size)
+         break;
+ 
+     default:
+-        qemu_log_mask(LOG_GUEST_ERROR, "%s: Bad offset %"HWADDR_PRIx"\n",
++        qemu_log_mask(LOG_UNIMP, "%s: Unsupported offset 0x%"HWADDR_PRIx"\n",
+                       __func__, offset);
+         return 0;
+     }
+@@ -226,8 +226,9 @@ static void bcm2835_mbox_write(void *opaque, hwaddr offset,
+         break;
+ 
+     default:
+-        qemu_log_mask(LOG_GUEST_ERROR, "%s: Bad offset %"HWADDR_PRIx"\n",
+-                      __func__, offset);
++        qemu_log_mask(LOG_UNIMP, "%s: Unsupported offset 0x%"HWADDR_PRIx
++                                 " value 0x%"PRIx64"\n",
++                      __func__, offset, value);
+         return;
+     }
+ 
+@@ -308,7 +309,7 @@ static void bcm2835_mbox_realize(DeviceState *dev, Error **errp)
+     }
+ 
+     s->mbox_mr = MEMORY_REGION(obj);
+-    address_space_init(&s->mbox_as, s->mbox_mr, NULL);
++    address_space_init(&s->mbox_as, s->mbox_mr, TYPE_BCM2835_MBOX "-memory");
+     bcm2835_mbox_reset(dev);
+ }
+ 
+diff --git a/hw/misc/bcm2835_property.c b/hw/misc/bcm2835_property.c
+index 0bf789cf..57a71974 100644
+--- a/hw/misc/bcm2835_property.c
++++ b/hw/misc/bcm2835_property.c
+@@ -53,7 +53,9 @@ static void bcm2835_property_mbox_push(BCM2835PropertyState *s, uint32_t value)
+             break;
+         case 0x00010001: /* Get board model */
+             qemu_log_mask(LOG_UNIMP,
+-                          "bcm2835_property: %x get board model NYI\n", tag);
++                          "bcm2835_property: 0x%08x get board model NYI\n",
++                          tag);
++            /* FIXME returning uninitialized memory */
+             resplen = 4;
+             break;
+         case 0x00010002: /* Get board revision */
+@@ -66,7 +68,9 @@ static void bcm2835_property_mbox_push(BCM2835PropertyState *s, uint32_t value)
+             break;
+         case 0x00010004: /* Get board serial */
+             qemu_log_mask(LOG_UNIMP,
+-                          "bcm2835_property: %x get board serial NYI\n", tag);
++                          "bcm2835_property: 0x%08x get board serial NYI\n",
++                          tag);
++            /* FIXME returning uninitialized memory */
+             resplen = 8;
+             break;
+         case 0x00010005: /* Get ARM memory */
+@@ -101,7 +105,8 @@ static void bcm2835_property_mbox_push(BCM2835PropertyState *s, uint32_t value)
+ 
+         case 0x00038001: /* Set clock state */
+             qemu_log_mask(LOG_UNIMP,
+-                          "bcm2835_property: %x set clock state NYI\n", tag);
++                          "bcm2835_property: 0x%08x set clock state NYI\n",
++                          tag);
+             resplen = 8;
+             break;
+ 
+@@ -122,11 +127,20 @@ static void bcm2835_property_mbox_push(BCM2835PropertyState *s, uint32_t value)
+             resplen = 8;
+             break;
+ 
++        case 0x00030030: /* Get domain state */
++            qemu_log_mask(LOG_UNIMP,
++                          "bcm2835_property: 0x%08x get domain state NYI\n",
++                          tag);
++            /* FIXME returning uninitialized memory */
++            resplen = 8;
++            break;
++
+         case 0x00038002: /* Set clock rate */
+         case 0x00038004: /* Set max clock rate */
+         case 0x00038007: /* Set min clock rate */
+             qemu_log_mask(LOG_UNIMP,
+-                          "bcm2835_property: %x set clock rates NYI\n", tag);
++                          "bcm2835_property: 0x%08x set clock rate NYI\n",
++                          tag);
+             resplen = 8;
+             break;
+ 
+@@ -271,8 +285,8 @@ static void bcm2835_property_mbox_push(BCM2835PropertyState *s, uint32_t value)
+             break;
+ 
+         default:
+-            qemu_log_mask(LOG_GUEST_ERROR,
+-                          "bcm2835_property: unhandled tag %08x\n", tag);
++            qemu_log_mask(LOG_UNIMP,
++                          "bcm2835_property: unhandled tag 0x%08x\n", tag);
+             break;
+         }
+ 
+@@ -400,7 +414,7 @@ static void bcm2835_property_realize(DeviceState *dev, Error **errp)
+     }
+ 
+     s->dma_mr = MEMORY_REGION(obj);
+-    address_space_init(&s->dma_as, s->dma_mr, NULL);
++    address_space_init(&s->dma_as, s->dma_mr, TYPE_BCM2835_PROPERTY "-memory");
+ 
+     /* TODO: connect to MAC address of USB NIC device, once we emulate it */
+     qemu_macaddr_default_if_unset(&s->macaddr);
+diff --git a/include/hw/arm/bcm2835_peripherals.h b/include/hw/arm/bcm2835_peripherals.h
+index 6b17f6a3..2e5f243b 100644
+--- a/include/hw/arm/bcm2835_peripherals.h
++++ b/include/hw/arm/bcm2835_peripherals.h
+@@ -23,6 +23,7 @@
+ #include "hw/sd/sdhci.h"
+ #include "hw/sd/bcm2835_sdhost.h"
+ #include "hw/gpio/bcm2835_gpio.h"
++#include "hw/misc/unimp.h"
+ 
+ #define TYPE_BCM2835_PERIPHERALS "bcm2835-peripherals"
+ #define BCM2835_PERIPHERALS(obj) \
+@@ -37,7 +38,11 @@ typedef struct BCM2835PeripheralState {
+     MemoryRegion ram_alias[4];
+     qemu_irq irq, fiq;
+ 
++    UnimplementedDeviceState pm;
++    UnimplementedDeviceState cprman;
++    UnimplementedDeviceState a2w;
+     PL011State uart0;
++    UnimplementedDeviceState uartu[6];
+     BCM2835AuxState aux;
+     BCM2835FBState fb;
+     BCM2835DMAState dma;
+@@ -48,6 +53,19 @@ typedef struct BCM2835PeripheralState {
+     SDHCIState sdhci;
+     BCM2835SDHostState sdhost;
+     BCM2835GpioState gpio;
++    UnimplementedDeviceState i2s;
++    UnimplementedDeviceState spi[7];
++    UnimplementedDeviceState i2c[7];
++    UnimplementedDeviceState otp;
++    UnimplementedDeviceState dbus;
++    UnimplementedDeviceState ave0;
++    UnimplementedDeviceState bscsl;
++    UnimplementedDeviceState smi;
++    UnimplementedDeviceState dwc2;
++    UnimplementedDeviceState xhci;
++    UnimplementedDeviceState argon;
++    UnimplementedDeviceState v3d;
++    UnimplementedDeviceState sdramc;
+ } BCM2835PeripheralState;
+ 
+ #endif /* BCM2835_PERIPHERALS_H */
+diff --git a/include/hw/arm/bcm2836.h b/include/hw/arm/bcm2836.h
+index a2cb8454..89341125 100644
+--- a/include/hw/arm/bcm2836.h
++++ b/include/hw/arm/bcm2836.h
+@@ -13,6 +13,7 @@
+ 
+ #include "hw/arm/bcm2835_peripherals.h"
+ #include "hw/intc/bcm2836_control.h"
++#include "hw/intc/arm_gic.h"
+ 
+ #define TYPE_BCM283X "bcm283x"
+ #define BCM283X(obj) OBJECT_CHECK(BCM283XState, (obj), TYPE_BCM283X)
+@@ -25,6 +26,7 @@
+  */
+ #define TYPE_BCM2836 "bcm2836"
+ #define TYPE_BCM2837 "bcm2837"
++#define TYPE_BCM2838 "bcm2838"
+ 
+ typedef struct BCM283XState {
+     /*< private >*/
+@@ -35,6 +37,7 @@ typedef struct BCM283XState {
+     uint32_t enabled_cpus;
+ 
+     ARMCPU cpus[BCM283X_NCPUS];
++    GICState gic;
+     BCM2836ControlState control;
+     BCM2835PeripheralState peripherals;
+ } BCM283XState;
+diff --git a/include/hw/arm/raspi_platform.h b/include/hw/arm/raspi_platform.h
+index 10083d33..0ea54766 100644
+--- a/include/hw/arm/raspi_platform.h
++++ b/include/hw/arm/raspi_platform.h
+@@ -25,34 +25,87 @@
+ #ifndef HW_ARM_RASPI_PLATFORM_H
+ #define HW_ARM_RASPI_PLATFORM_H
+ 
+-#define MCORE_OFFSET            0x0000   /* Fake frame buffer device
+-                                          * (the multicore sync block) */
+-#define IC0_OFFSET              0x2000
++#define MSYNC_OFFSET            0x0000   /* Multicore Sync Block */
++#define CCPT_OFFSET             0x1000   /* Compact Camera Port 2 TX */
++#define INTE_OFFSET             0x2000   /* VC Interrupt controller */
+ #define ST_OFFSET               0x3000   /* System Timer */
++#define TXP_OFFSET              0x4000
++#define JPEG_OFFSET             0x5000
+ #define MPHI_OFFSET             0x6000   /* Message-based Parallel Host Intf. */
+ #define DMA_OFFSET              0x7000   /* DMA controller, channels 0-14 */
+-#define ARM_OFFSET              0xB000   /* BCM2708 ARM control block */
++#define ARBA_OFFSET             0x9000
++#define BRDG_OFFSET             0xa000
++#define ARM_OFFSET              0xB000   /* ARM control block */
+ #define ARMCTRL_OFFSET          (ARM_OFFSET + 0x000)
+ #define ARMCTRL_IC_OFFSET       (ARM_OFFSET + 0x200) /* Interrupt controller */
+-#define ARMCTRL_TIMER0_1_OFFSET (ARM_OFFSET + 0x400) /* Timer 0 and 1 */
++#define ARMCTRL_TIMER0_1_OFFSET (ARM_OFFSET + 0x400) /* Timer 0 and 1 (SP804) */
+ #define ARMCTRL_0_SBM_OFFSET    (ARM_OFFSET + 0x800) /* User 0 (ARM) Semaphores
+                                                       * Doorbells & Mailboxes */
+ #define PM_OFFSET               0x100000 /* Power Management, Reset controller
+                                           * and Watchdog registers */
+-#define PCM_CLOCK_OFFSET        0x101098
++#define CPRMAN_OFFSET           0x101000 /* Clock Management */
++#define A2W_OFFSET              0x102000
++#define AVS_OFFSET              0x103000 /* Audio Video Standard */
+ #define RNG_OFFSET              0x104000
+ #define GPIO_OFFSET             0x200000
+-#define UART0_OFFSET            0x201000
+-#define MMCI0_OFFSET            0x202000
+-#define I2S_OFFSET              0x203000
+-#define SPI0_OFFSET             0x204000
++#define UART0_OFFSET            0x201000 /* PL011 */
++#define UART2_OFFSET            0x201400 /* PL011 */
++#define UART3_OFFSET            0x201600 /* PL011 */
++#define UART4_OFFSET            0x201800 /* PL011 */
++#define UART5_OFFSET            0x201a00 /* PL011 */
++#define MMCI0_OFFSET            0x202000 /* Legacy MMC */
++#define I2S_OFFSET              0x203000 /* PCM */
++#define SPI0_OFFSET             0x204000 /* SPI master */
++#define SPI3_OFFSET             0x204600
++#define SPI4_OFFSET             0x204800
++#define SPI5_OFFSET             0x204a00
++#define SPI6_OFFSET             0x204c00
+ #define BSC0_OFFSET             0x205000 /* BSC0 I2C/TWI */
+-#define UART1_OFFSET            0x215000
+-#define EMMC_OFFSET             0x300000
++#define BSC3_OFFSET             0x205600
++#define BSC4_OFFSET             0x205800
++#define BSC5_OFFSET             0x205a00
++#define BSC6_OFFSET             0x205c00
++#define PIXV0_OFFSET            0x206000
++#define PIXV1_OFFSET            0x207000
++#define DPI_OFFSET              0x208000
++#define DSI0_OFFSET             0x209000 /* Display Serial Interface */
++#define PWM_OFFSET              0x20c000
++#define PERM_OFFSET             0x20d000
++#define TEC_OFFSET              0x20e000
++#define OTP_OFFSET              0x20f000
++#define SLIM_OFFSET             0x100000 /* SLIMbus */
++#define CPG_OFFSET              0x110000
++#define AVSP_OFFSET             0x130000
++#define BSC_SL_OFFSET           0x214000 /* SPI slave */
++#define THERMAL_OFFSET          0x212000
++#define AUX_OFFSET              0x215000 /* AUX: UART1/SPI1/SPI2 */
++#define EMMC1_OFFSET            0x300000
++#define EMMC2_OFFSET            0x340000
++#define HVS_OFFSET              0x400000
+ #define SMI_OFFSET              0x600000
++#define DSI1_OFFSET             0x700000
++#define UCAM_OFFSET             0x800000
++#define CMI_OFFSET              0x802000
+ #define BSC1_OFFSET             0x804000 /* BSC1 I2C/TWI */
+-#define USB_OFFSET              0x980000 /* DTC_OTG USB controller */
++#define BSC2_OFFSET             0x805000 /* BSC2 I2C/TWI */
++#define VECA_OFFSET             0x806000
++#define PIXV2_OFFSET            0x807000
++#define HDMI_OFFSET             0x808000
++#define HDCP_OFFSET             0x809000
++#define ARBR0_OFFSET            0x80a000
++#define DBUS_OFFSET             0x900000
++#define AVE0_OFFSET             0x910000
++#define USB_OTG_OFFSET          0x980000 /* DTC_OTG USB controller */
++#define USB_XHCI_OFFSET         0x9c0000 /* generic-xhci controller */
++#define ARGON_OFFSET            0xb00000
++#define V3D_OFFSET              0xc00000
++#define SDRAMC_OFFSET           0xe00000
++#define L2CC_OFFSET             0xe01000 /* Level 2 Cache controller */
++#define L1CC_OFFSET             0xe02000 /* Level 1 Cache controller */
++#define ARBR1_OFFSET            0xe04000
+ #define DMA15_OFFSET            0xE05000 /* DMA controller, channel 15 */
++#define DCRC_OFFSET             0xe07000
++#define AXIP_OFFSET             0xe08000
+ 
+ /* GPU interrupts */
+ #define INTERRUPT_TIMER0               0
+diff --git a/include/qemu-common.h b/include/qemu-common.h
+index 0235cd3b..8d84db90 100644
+--- a/include/qemu-common.h
++++ b/include/qemu-common.h
+@@ -123,7 +123,6 @@ void qemu_hexdump(const char *buf, FILE *fp, const char *prefix, size_t size);
+ int parse_debug_env(const char *name, int max, int initial);
+ 
+ const char *qemu_ether_ntoa(const MACAddr *mac);
+-char *size_to_str(uint64_t val);
+ void page_size_init(void);
+ 
+ /* returns non-zero if dump is in progress, otherwise zero is
+diff --git a/include/qemu/cutils.h b/include/qemu/cutils.h
+index 12301340..b54c847e 100644
+--- a/include/qemu/cutils.h
++++ b/include/qemu/cutils.h
+@@ -155,6 +155,8 @@ int qemu_strtosz(const char *nptr, const char **end, uint64_t *result);
+ int qemu_strtosz_MiB(const char *nptr, const char **end, uint64_t *result);
+ int qemu_strtosz_metric(const char *nptr, const char **end, uint64_t *result);
+ 
++char *size_to_str(uint64_t val);
++
+ /* used to print char* safely */
+ #define STR_OR_NULL(str) ((str) ? (str) : "null")
+ 
+diff --git a/qapi/string-output-visitor.c b/qapi/string-output-visitor.c
+index 7ab64468..0d93605d 100644
+--- a/qapi/string-output-visitor.c
++++ b/qapi/string-output-visitor.c
+@@ -11,7 +11,7 @@
+  */
+ 
+ #include "qemu/osdep.h"
+-#include "qemu-common.h"
++#include "qemu/cutils.h"
+ #include "qapi/string-output-visitor.h"
+ #include "qapi/visitor-impl.h"
+ #include "qemu/host-utils.h"

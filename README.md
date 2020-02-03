@@ -6,9 +6,6 @@ Same goes for organization; I think it'd be best if all documentation goes in th
 Regarding git commit messages: I wouldn't worry right now. We'll be making tons of changes, so at this point, git is more useful as sync-and-backup than version control. 
 -->
 
-## TODO
-- Add nix expression for patched qemu-raspi4 to repo
-
 ## Intro
 
 <!-- sources not yet linked to in this section:
@@ -77,9 +74,16 @@ As far as I can tell, the kernel8.img file that RPis boot from is simply raw mac
 Machine code: the binary 1s and 0s seen flying across monitors in movies.
 
 ### Hello World
+Write machine code to print `x` to UART.
 
+### Stopping Cores
+Put all but one core to sleep.
 
+### Echo
+For each character sent to UART, send it back.
 
+### Cat
+Store a bunch of characters to memory, then send them back all at once upon EOF.
 
 ## Other Resources
 
