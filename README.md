@@ -73,16 +73,30 @@ As far as I can tell, the kernel8.img file that RPis boot from is simply raw mac
 
 Machine code: the binary 1s and 0s seen flying across monitors in movies.
 
+This will probably be the most frustrating part of this course, but I think it should be fun to see hand-written binary come to life.
+
+To write our initial machine code, I recommend the following workflow:
+1. Write the 1s and 0s in a text file with lots of comments and whitespace
+2. Duplicate the file
+2. Manually remove all comments and whitespace from the file copy
+2. Run `cat file-copy.txt | ( echo 'obase=16;ibase=2' ; sed -Ee 's/[01]{4}/;\0/g') | bc | xxd -r -p > binary-file.txt` to convert those ASCII 1s and 0s into a real binary file.
+
+Note that, for now, we manually remove comments (instead of using `sed`/`grep` to do so). That's intentional. One of the first compiler functionalities we'll implement will be automatically removing comments & whitespace from a file then parsing the 1s and 0s.
+
 ### Hello World
+
 Write machine code to print `x` to UART.
 
 ### Stopping Cores
+
 Put all but one core to sleep.
 
 ### Echo
+
 For each character sent to UART, send it back.
 
 ### Cat
+
 Store a bunch of characters to memory, then send them back all at once upon EOF.
 
 ## Other Resources
