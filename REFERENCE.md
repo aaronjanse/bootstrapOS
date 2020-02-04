@@ -62,7 +62,7 @@ The aarch64 instruction encoding is 32 bits wide, so we cannot store large const
 
 #### Logic Instructions (and/or/xor/etc)
 
-[ARMv8 Manual, Page 6](https://static.docs.arm.com/ddi0487/ca/DDI0487C_a_armv8_arm.pdf#page=226)
+[ARMv8 Manual, Page 226](https://static.docs.arm.com/ddi0487/ca/DDI0487C_a_armv8_arm.pdf#page=226)
 
 #### Move System Register (MSR)
 

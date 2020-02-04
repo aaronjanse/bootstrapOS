@@ -78,18 +78,23 @@ This will probably be the most frustrating part of this course, but I think it s
 To write our initial machine code, I recommend the following workflow:
 1. Write the 1s and 0s in a text file with lots of comments and whitespace
 2. Duplicate the file
-2. Manually remove all comments and whitespace from the file copy
-2. Run `cat file-copy.txt | ( echo 'obase=16;ibase=2' ; sed -Ee 's/[01]{4}/;\0/g') | bc | xxd -r -p > binary-file.txt` to convert those ASCII 1s and 0s into a real binary file.
+3. Manually remove all comments and whitespace from the file copy
+4. Run `cat ones-and-zeros.txt | binify > kernel8.img` to convert those ASCII 1s and 0s into a real binary file
+5. Emulate the raspi4 by running `emulate kernel8.img`
 
-Note that, for now, we manually remove comments (instead of using `sed`/`grep` to do so). That's intentional. One of the first compiler functionalities we'll implement will be automatically removing comments & whitespace from a file then parsing the 1s and 0s.
+Note that, for now, we manually remove comments (instead of using `sed`/`grep` to do so). That's intentional. One of the first compiler functionalities we'll implement will be automatically removing comments and whitespace from a file then parsing the 1s and 0s.
 
 ### Hello World
 
 Write machine code to print `x` to UART.
 
+See the provided documentation for information on how to do this. At first, I recommend only implemeting what's required to run on the emulator. Once you verify that you see UART output in the emulator, you should implement the required UART setup steps for real hardware.
+
+If you do this correctly, you should see `xxxx` from both the hardware and emulator, even though you only printed one `x`. This is intentional! We'll fix this in the next section.
+
 ### Stopping Cores
 
-Put all but one core to sleep.
+The duplicated output is because the raspi4 has 4 cores. We need to put all but one core to sleep. All the relevant information should be in the provided documentation.
 
 ### Echo
 
