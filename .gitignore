@@ -1,2 +1,3 @@
-documentation.html
+*.html
+!template.html
 compiled/
