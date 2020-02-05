@@ -33,15 +33,28 @@ Many peripherals (external io stuff) are accessible through special memory addre
 
 ◊section[3 null]{External Documentation}
 
-◊armv8-arm[175 "110,-110,807"]{BCM2835 ARM Peripherals, Page 175}
+◊ul{
+	◊li{
+		◊armv8-arm[175 "110,-110,807"]{BCM2835 ARM Peripherals, Page 175}
+	}
+	◊li{
+		◊link["http://infocenter.arm.com/help/topic/com.arm.doc.ddi0183g/DDI0183G_uart_pl011_r1p5_trm.pdf#page=47&zoom=auto,-29,502"]{PrimeCell UART Technical Reference Manual}
+		◊br{}
+		You should only need this document for UART.
+	}
+	◊li{
+		◊arm-periph[177 "110,-110,280"]{Register addresses}, with offset ◊mono{0xFE201000} on raspi4
+	}
+}
 
-◊link["http://infocenter.arm.com/help/topic/com.arm.doc.ddi0183g/DDI0183G_uart_pl011_r1p5_trm.pdf#page=47&zoom=auto,-29,502"]{PrimeCell UART Technical Reference Manual}
 
-◊arm-periph[177 "110,-110,280"]{Register addresses}, with offset ◊mono{0xFE201000} on raspi4
+
+
+
 
 ◊section[3 null]{Setup Procedure}
 
-On QEMU, UART data can be sent/received by simply writing ASCII-encoded text to/from ◊mono{0xFE201000}, but on real hardware, you'll need to do some setup first.
+This can be skipped on QEMU, but I recommend implementing the hardware setup procedure as promptly as possible.
 
 For the following setup steps, use the BCM2836 Peripheral Manual's ◊arm-periph[90 "110,-110,652"]{GPIO address section}, replacing ◊mono{0x7E20} with ◊mono{0xFE20} for raspi4.  Also see the manual's ◊arm-periph[177 "110,-110,280"]{UART address section}.
 
@@ -87,6 +100,10 @@ write the baud rate divisor integer (◊mono{BDR_I}) to the ◊arm-periph[183 "1
 }
 
 ◊section[3 null]{Writing}
+
+UART data can be sent by storing ASCII-encoded text in ◊mono{0xFE201000}.
+
+On real hardware, you'll want to...
 
 ◊section[3 null]{Reading}
 
@@ -157,6 +174,8 @@ The aarch64 instruction encoding is 32 bits wide, so we cannot store large const
 
 ◊section[1 null]{Machine Code Operations}
 
+Every operation that you'll need should be in this document. There are plenty more operations out there, but for the purposes of this book, we'll only learn the basics. This is a tradeoff of efficiency (using the minimal number of instructions) verus simplicity.
+
 ◊section[2 null]{Register Movement}
 
 This instruction family copies into a register either a constant or the value of another register.
@@ -169,12 +188,40 @@ This instruction family copies into a register either a constant or the value of
 
 See the register summaries above for the parameters needed to access a specific system register.
 
-◊section[2 ◊armv8-arm[226 null]{pg 226}]{Logical Operations}
+◊section[2 ◊armv8-arm[270 "auto,-4,358"]{pg 270}]{Logical Operations}
+
+Using constants in logical aarch64 operations can be ◊link[https://news.ycombinator.com/item?id=16272350]{surprisingly complex}, so we'll only use logical operations between registers.
 
 I won't explain all of these here, but know that ◊mono{xor} is also known as ◊mono{eor}.
 
-◊section[3 null]{And}
 
+◊codeblock{
+1 opc2 0 1 0 1 0 shift2 N Rm5 imms6 Rn6 Rd5 
+}
+
+◊table{
+	◊tr{
+		◊th{opc}
+		◊th{instruction}
+	}
+	◊tr{
+		◊td{◊code{00}}
+		◊td{AND}
+	}
+	◊tr{
+		◊td{◊code{01}}
+		◊td{OR}
+	}
+	◊tr{
+		◊td{◊code{10}}
+		◊td{XOR}
+	}
+}
+
+◊section[3 null]{Register-based}
+
+
+◊section[3 null]{And, immediate}
 ◊section[3 null]{Or}
 
 ◊section[3 null]{Xor}
@@ -190,21 +237,25 @@ I won't explain all of these here, but know that ◊mono{xor} is also known as �
 ◊link["https://people.cs.clemson.edu/~rlowe/cs2310/notes/ln_arm_load_store.pdf"]{Rose Lowe cs2310 Slideshow}
 
 
-◊section[3 ◊armv8-arm[901 "auto,-4,387"]{pg 901}]{Store, Pre-Index}
+◊section[3 ◊armv8-arm[901 "auto,-4,387"]{pg 901}]{Store, pre-index}
+
+◊codeblock{
+1 1 1 1 1 0 0 0 0 0 0 imm9 1 1 Rn5 Rt5 
+}
 
 Reads the address `Rn + imm` from memory and stores it into `Rt`.
 
-```
-Rt <- *(Rn + imm)
-```
 
-◊section[3 ◊armv8-arm[901 "auto,-4,655"]{pg 901}]{Store, Post-Index}
+◊delete{
 
+	◊section[3 ◊armv8-arm[901 "auto,-4,655"]{pg 901}]{Store, Post-Index}
 
 
-Reads the address `Rn` from memory stores it into `Rt`, then updates `Rn` to `Rn + imm`.
 
-```
-Rt <- *Rn
- Rn <- Rn + imm
-```
+	Reads the address `Rn` from memory stores it into `Rt`, then updates `Rn` to `Rn + imm`.
+
+	```
+	Rt <- *Rn
+	 Rn <- Rn + imm
+	```
+}

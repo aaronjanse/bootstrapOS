@@ -87,6 +87,9 @@
 		"https://static.docs.arm.com/100095/0003/cortex_a72_mpcore_trm_100095_0003_05_en.pdf"
 		page zoom desc))
 
+(define (delete . x)
+	`(span ""))
+
 ; (define (table . content)
 ; 	`(table ,@content))
 

@@ -6,9 +6,10 @@
 		* {
 			font-family: 'Crimson Text', serif;
 		}
-		#toc {
-  			position: absolute;
-  			left: 2em;
+		#sidebar {
+			position: absolute;
+			left: 2em;
+			font-weight: bold;
 		}
 		a {
 			color: #3467ff;
@@ -61,7 +62,7 @@
 			font-family: inherit;
 		}*/
 		body {
-			margin-left: 30%;
+			margin-left: 20em;
 			margin-top: 5%;
 			width: 60%;
 		}
@@ -85,7 +86,6 @@
   h6:before, .nav6:before {counter-increment: h6; content: counter(h2) "." counter(h3) "." counter(h4) "." counter(h5) "." counter(h6) ". "; counter-increment: h4counter; }
 		#toc a, .nav2:before, .nav3:before, .nav4:before, .nav5:before, .nav6:before {
 			color: #404040;
-			font-weight: bold;
 		}
 
 		#reset-counter {
@@ -95,7 +95,18 @@
 	</style>
 </head>
 <body style="background: #f6f6f6">
-◊(->html `(div ((id, "toc")) ,@(select-from-doc 'toc-entries here)))
+	<div id="sidebar">
+		<div id="pages">
+			Introduction<br>
+			Machine Code<br>
+			Assembly<br>
+			Stack Language<br>
+			Curly Braces<br>
+			<br>
+			Documentation
+		</div>
+		◊(->html `(div ((id, "toc")) ,@(select-from-doc 'toc-entries here)))
+	</div>
 <span id="reset-counter"></span>
   ◊(map ->html (select-from-doc 'body here))
 </body>

@@ -15,4 +15,3 @@ mkShell {
   	alias emulate="qemu-system-aarch64 -M raspi4 -nographic -monitor none -kernel"
   '';
 }
-
