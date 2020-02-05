@@ -102,7 +102,7 @@ For each character sent to UART, send it back.
 
 ### Cat
 
-Store a bunch of characters to memory, then send them back all at once upon EOF.
+Store a bunch of characters to memory, then send them back all at once upon EOF
 
 ## Push Pop
 

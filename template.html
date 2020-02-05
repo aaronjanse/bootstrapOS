@@ -6,10 +6,22 @@
 		* {
 			font-family: 'Crimson Text', serif;
 		}
+		blockquote {
+			padding-left: 10px;
+			border-left: #cdcdcd 3px solid;
+			margin-left: 0;
+		}
 		#sidebar {
 			position: absolute;
 			left: 2em;
 			font-weight: bold;
+		}
+		#pages a {
+			/*color: #133da2;*/
+			color: inherit;
+		}
+		#pages a:hover {
+			text-decoration: underline;
 		}
 		a {
 			color: #3467ff;
@@ -27,8 +39,10 @@
 			text-align: right;
 			border:0px;
 		}
-		abbr {
+		i, b, em, a {
 			font-family: inherit;
+		}
+		abbr {
 			text-decoration: underline;
 		}
 	    code {
@@ -84,8 +98,12 @@
 		h4:before, .nav4:before {counter-increment: h4; content: counter(h2) "." counter(h3) "." counter(h4) ". "}
 		h5:before, .nav5:before {counter-increment: h5; content: counter(h2) "." counter(h3) "." counter(h4) "." counter(h5) ". "}
 		h6:before, .nav6:before {counter-increment: h6; content: counter(h2) "." counter(h3) "." counter(h4) "." counter(h5) "." counter(h6) ". "; counter-increment: h4counter; }
-		#toc a, .nav2:before, .nav3:before, .nav4:before, .nav5:before, .nav6:before {
+		#toc a, #toc-head, .nav2:before, .nav3:before, .nav4:before, .nav5:before, .nav6:before {
 			color: #404040;
+		}
+
+		#toc div a:hover {
+			color: #999;
 		}
 
 		#reset-counter {
@@ -97,14 +115,16 @@
 <body style="background: #f6f6f6">
 	<div id="sidebar">
 		<div id="pages">
-			Introduction<br>
-			Machine Code<br>
+			<a href="documentation.html">Documentation</a><br>
+			<br>
+			<a href="introduction.html">Introduction</a><br>
+			<a href="machine-code.html">Machine Code</a><br>
 			Assembly<br>
 			Stack Language<br>
 			Curly Braces<br>
 			<br>
-			Documentation
 		</div>
+		<div id="toc-head">Introduction</div>
 		◊(->html `(div ((id, "toc")) ,@(select-from-doc 'toc-entries here)))
 	</div>
 <span id="reset-counter"></span>

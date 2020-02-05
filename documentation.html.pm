@@ -76,7 +76,7 @@ For the following setup steps, use the BCM2836 Peripheral Manual's ◊arm-periph
 		disable GPIO pin pull up/down clock 0 (yeah, again; idk why)
 	}
 	◊li{
-		clear all pending interrupts using the ◊arm-periph[192 "110,-70,735"]{UART interrupt clear register} (write zero to the bits representing each interrupt you want to clear)
+		clear all pending interrupts using the ◊arm-periph[192 "110,-70,735"]{UART interrupt clear register}
 	}
 	◊li{
 		set baud rate to 115200 given a 3 Mhz clock (follow the PrimeCell UART Manual's ◊link["http://infocenter.arm.com/help/topic/com.arm.doc.ddi0183g/DDI0183G_uart_pl011_r1p5_trm.pdf#page=56&zoom=auto,-29,199"]{baud rate calculation example})
@@ -133,9 +133,16 @@ Rn = r2 = 00010
 Rd = r7 = 00111
 }
 
-Therefore, our fully encoded instruction is: (whitespace added for clarity)
+Therefore, we encode to the following:
 ◊codeblock{
 1 0 0 1 0 0 0 1 00 000000010000 00010 00111
+= 10010001 00000000 01000000 01000111
+}
+
+◊i{However}, because our chip is little-endian, we need to reverse the order of the bytes: (whitespace added for clarity)
+
+◊codeblock{
+01000111 01000000 00000000 10010001
 }
 
 ◊section[2 ◊cortex[75 "auto,-12,749"]{pg 75}]{Registers}
@@ -224,14 +231,27 @@ Rd <= imm << hw*16
 
 ◊section[3 ◊armv8-arm[802 null]{pg 802}]{From System Register}
 
-See the register summaries above for the parameters needed to access a specific system register.
+◊codeblock{
+1 1 0 1 0 1 0 1 0 0 1 SRn16 Rt5
+Rt <- SRn
+}
+
+◊table{
+	◊tr{
+		◊th{System Register}
+		◊th{SRn}
+	}
+	◊tr{
+		◊td{◊cortex[90 "auto,-12,258"]{◊code{MPIDR_EL1}}}
+		◊td{◊armv8-arm[2620 "110,-33,627"]{◊code{1100 0000 0000 0101}}}
+	}
+}
 
 ◊section[2 ◊armv8-arm[270 "auto,-4,358"]{pg 270}]{Logical Operations}
 
 Using constants in logical aarch64 operations can be ◊link["https://news.ycombinator.com/item?id=16272350"]{surprisingly complex}, so we'll only use logical operations between registers.
 
 I won't explain all of these here, but know that ◊code{xor} is also known as ◊code{eor}.
-
 
 ◊codeblock{
 1 opc2 0 1 0 1 0 shift2 N Rm5 imms6 Rn6 Rd5
@@ -257,7 +277,6 @@ I won't explain all of these here, but know that ◊code{xor} is also known as �
 }
 
 ◊section[3 null]{Register-based}
-
 
 ◊section[3 null]{And, immediate}
 ◊section[3 null]{Or}
@@ -301,7 +320,7 @@ Rd <= Rn + (uimm << (shift ? 12 : 0))
 *(Rt + imm) <= Rn
 }
 
-Reads the address `Rn + imm` from memory and stores it into the address `Rt`.
+Reads `Rn` and stores it into the memory address `Rt + imm`.
 
 
 ◊delete{
@@ -317,6 +336,86 @@ Reads the address `Rn + imm` from memory and stores it into the address `Rt`.
 	Rn <- Rn + imm
 	```
 }
+
+◊section[2 ◊armv8-arm[228 "auto,-4,723"]{pg 228}]{Branching}
+
+This is how you'll jump around the source code, which allows us to implement functions, if statements, and more.
+
+◊section[3 ◊armv8-arm[233 "auto,-4,495"]{pg 233}]{Unconditional Jump}
+
+◊codeblock{
+0 0 0 1 0 1 imm26
+}
+
+◊code{imm} is a signed constant that specificies how many instructions forward/backwards the processor should jump.
+
+◊delete{
+	CCMP immediate: https://static.docs.arm.com/ddi0487/ca/DDI0487C_a_armv8_arm.pdf#page=593&zoom=auto,-4,730
+}
+
+◊section[3 ◊armv8-arm[594 "auto,-4,730"]{pg 594}]{Compare}
+
+◊codeblock{
+1 1 1 1 1 0 1 0 0 1 0 Rm5 1 1 1 1 0 0 Rn5 0 0 0 0 0
+Rn ? Rm
+}
+
+Compares Rn to Rm. Used before a conditional jump.
+
+◊section[3 ◊armv8-arm[228 "auto,-4,317"]{pg 228}]{Conditional Jump}
+
+◊codeblock{
+0 1 0 1 0 1 0 0 imm19 0 cond4
+}
+
+◊code{imm} is a signed constant that specificies how many instructions forward/backwards the processor should jump.
+
+◊table{
+	◊tr{
+		◊th{cond}
+		◊th{◊link["https://www.element14.com/community/servlet/JiveServlet/previewBody/41836-102-1-229511/ARM.Reference_Manual.pdf#page=16&zoom=auto,-61,568"]{description}}
+	}
+	◊tr{
+		◊td{◊code{0000}}
+		◊td{Equal}
+	}
+	◊tr{
+		◊td{◊code{0001}}
+		◊td{Not Equal}
+	}
+	◊tr{
+		◊td{◊code{1011}}
+		◊td{Less Than}
+	}
+	◊tr{
+		◊td{◊code{1101}}
+		◊td{Less Than or Equal}
+	}
+	◊tr{
+		◊td{◊code{1100}}
+		◊td{Greater Than}
+	}
+	◊tr{
+		◊td{◊code{1010}}
+		◊td{Greater Than or Equal}
+	}
+	◊tr{
+		◊td{◊code{1111}}
+		◊td{Always}
+	}
+}
+
+◊code{imm} is a signed constant that specificies how many instructions forward/backwards the processor should jump.
+
+◊section[2 null]{Miscellaneous}
+
+◊section[3 ◊armv8-arm[1000 "auto,-4,730"]{pg 1000}]{Enter Sleep State}
+
+◊codeblock{
+1101 0101 0000 0011 0010 0000 0101 1111
+}
+
+You'll want to loop this instruction.
 
 ◊hr{}
 

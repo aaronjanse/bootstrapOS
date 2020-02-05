@@ -28,7 +28,7 @@
 ; now, reverse the bytes:
 00100001 00000100 01000000 10010001
 
-
+; store r0 into *r1 
 ; 1 1 1 1 1 0 0 0 0 0 0 imm9 1 1 Rn5 Rt5
 ; *(Rt + imm) <= Rn
 ; *(r1 + 0) <= r0
