@@ -1,0 +1,27 @@
+; store `0x97` (ASCII `A`) into r0
+; 1 1 0 1 0 0 1 0 1 hw2 imm16 Rd5
+; Rd <= imm << hw*16
+; r0 <= 0x97 << 0*16
+1 1 0 1 0 0 1 0 1 00 0000 0000 0110 0001 00000
+
+; to move 0xFE201000 into r1, we need two instructions
+; (because the constant doesn't fit into one)
+
+;; 1. move 0xFE20 << 16 into r1
+; 1 1 0 1 0 0 1 0 1 hw2 imm16 Rd5
+; Rd <= imm << hw*16
+; r1 <= 0xFE20 << 1*16
+1 1 0 1 0 0 1 0 1 01 1111 1110 0010 0000 00001
+
+
+;; 2. add 0x1000 to r1
+; 1 0 0 1 0 0 0 1 0 shift1 uimm12 Rn5 Rd5
+; Rd <= Rn + (uimm << (shift ? 12 : 0))
+; r1 <= (r1 + (0x1 << (1 ? 12 : 0)))
+1 0 0 1 0 0 0 1 0 1 0000 0000 0001 00001 00001
+
+
+; 1 1 1 1 1 0 0 0 0 0 0 imm9 1 1 Rn5 Rt5
+; *(Rt + imm) <= Rn
+; *(r1 + 0) <= r0
+1 1 1 1 1 0 0 0 0 0 0 000000000 1 1 00000 00001

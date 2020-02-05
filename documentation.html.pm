@@ -35,15 +35,13 @@ Many peripherals (external io stuff) are accessible through special memory addre
 
 ◊ul{
 	◊li{
+		◊link["http://infocenter.arm.com/help/topic/com.arm.doc.ddi0183g/DDI0183G_uart_pl011_r1p5_trm.pdf#page=47&zoom=auto,-29,502"]{PrimeCell UART Technical Reference Manual}
+	}
+	◊li{
 		◊armv8-arm[175 "110,-110,807"]{BCM2835 ARM Peripherals, Page 175}
 	}
 	◊li{
-		◊link["http://infocenter.arm.com/help/topic/com.arm.doc.ddi0183g/DDI0183G_uart_pl011_r1p5_trm.pdf#page=47&zoom=auto,-29,502"]{PrimeCell UART Technical Reference Manual}
-		◊br{}
-		You should only need this document for UART.
-	}
-	◊li{
-		◊arm-periph[177 "110,-110,280"]{Register addresses}, with offset ◊mono{0xFE201000} on raspi4
+		◊arm-periph[177 "110,-110,280"]{UART Register addresses}, with offset ◊mono{0xFE201000} on raspi4
 	}
 }
 
@@ -95,7 +93,10 @@ write the baud rate divisor integer (◊mono{BDR_I}) to the ◊arm-periph[183 "1
 		enable FIFO and 8-bit data transmission using the ◊arm-periph[184 "110,-70,645"]{UART line control register}
 	}
 	◊li{
-		mask all interrupts using the [TODO...]
+		mask all interrupts using the ◊arm-periph[188 "110,-70,603"]{interrupt mask set/clear register}
+	}
+	◊li{
+		enable UART, transfer, and receive using the ◊arm-periph[185 "110,-110,325"]{UART control register}
 	}
 }
 
@@ -113,9 +114,9 @@ On real hardware, you'll want to...
 
 Very few people venture below assembly to machine code, so most machine code is described in terms of the equivalent assembly.
 
-For example, let's say we wanted to execute ◊code{r7 <- r2 + 16}.
+For example, let's say we wanted to execute ◊code{r7 <= r2 + 16}.
 
-Once we find the ◊code{add} instruction in the ARMv8 Manual (◊armv8-arm[531 "auto,-4,730"]{pg 521}) or via the documentation below, we see that the encoding for 64-bit ◊code{add} is as follows: 
+Once we find the ◊code{add} instruction in the ARMv8 Manual (◊armv8-arm[531 "auto,-4,730"]{pg 531}) or via the documentation below, we see that the encoding for 64-bit ◊code{add} is as follows: 
 
 ◊pre{
 sf 0 0 1 0 0 0 1 shift2 imm12 Rn Rd
@@ -123,7 +124,7 @@ sf 0 0 1 0 0 0 1 shift2 imm12 Rn Rd
 
 Note the numbers after some variable names; they indicate how many bits wide their encodings are.
 
-In our case, to do ◊code{r7 <- r2 + 16}, we calculate the following:
+In our case, to do ◊code{r7 <= r2 + 16}, we calculate the following:
 ◊codeblock{
 sf = 1
 shift = 00
@@ -164,6 +165,14 @@ These are the fastest place to store data. Most machine code instructions involv
 			General-purpose registers. Because we're writing our own assembly language, feel free to use these however you want
 		}
 	}
+	◊tr{
+		◊td{
+			◊code{r31} or ◊code{SP}
+		}
+		◊td{
+			Depending on the instruction, this is either the stack pointer or a register that always reads zero and discards data when written
+		}
+	}
 }
 
 
@@ -172,17 +181,46 @@ These are the fastest place to store data. Most machine code instructions involv
 The aarch64 instruction encoding is 32 bits wide, so we cannot store large constants into registers in a single command. Instead, we use multiple commands to store the constant, such as ◊mono{mov} with a bit shift followed by one or more ◊mono{add} instructions.
 
 
-◊section[1 null]{Machine Code Operations}
+◊section[1 ◊armv8-arm[224 "auto,-4,745"]{pg 224}]{Machine Code Operations}
 
 Every operation that you'll need should be in this document. There are plenty more operations out there, but for the purposes of this book, we'll only learn the basics. This is a tradeoff of efficiency (using the minimal number of instructions) verus simplicity.
+
+◊table{
+	◊tr{
+		◊th{Term}
+		◊th{Definition}
+	}
+	◊tr{
+		◊td{immediate}
+		◊td{constant}
+	}
+	◊tr{
+		◊td{◊code{imm}}
+		◊td{signed immediate}
+	}
+	◊tr{
+		◊td{◊code{uimm}}
+		◊td{unsigned immediate}
+	}
+}
 
 ◊section[2 null]{Register Movement}
 
 This instruction family copies into a register either a constant or the value of another register.
 
-◊section[3 null]{From Constant}
+◊section[3 ◊armv8-arm[226 "auto,-4,435"]{pg 226}]{From Constant}
 
-◊section[3 null]{From Register}
+◊instr{
+1 1 0 1 0 0 1 0 1 hw2 imm16 Rd5
+Rd <= imm << hw*16
+}
+
+◊section[3 ◊armv8-arm[723 "auto,-4,723"]{pg 723}]{From Register}
+
+◊codeblock{
+1 0 0 1 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 Rn5 Rd5
+(Rd or *SP) <= (Rn or *SP)
+}
 
 ◊section[3 ◊armv8-arm[802 null]{pg 802}]{From System Register}
 
@@ -190,13 +228,13 @@ See the register summaries above for the parameters needed to access a specific 
 
 ◊section[2 ◊armv8-arm[270 "auto,-4,358"]{pg 270}]{Logical Operations}
 
-Using constants in logical aarch64 operations can be ◊link[https://news.ycombinator.com/item?id=16272350]{surprisingly complex}, so we'll only use logical operations between registers.
+Using constants in logical aarch64 operations can be ◊link["https://news.ycombinator.com/item?id=16272350"]{surprisingly complex}, so we'll only use logical operations between registers.
 
-I won't explain all of these here, but know that ◊mono{xor} is also known as ◊mono{eor}.
+I won't explain all of these here, but know that ◊code{xor} is also known as ◊code{eor}.
 
 
 ◊codeblock{
-1 opc2 0 1 0 1 0 shift2 N Rm5 imms6 Rn6 Rd5 
+1 opc2 0 1 0 1 0 shift2 N Rm5 imms6 Rn6 Rd5
 }
 
 ◊table{
@@ -228,7 +266,26 @@ I won't explain all of these here, but know that ◊mono{xor} is also known as �
 
 ◊section[2 null]{Arithmetic Operations}
 
-◊section[3 null]{Add}
+◊section[3 ◊armv8-arm[533 "auto,-4,733"]{pg 533}]{Add}
+
+◊section[3 ◊armv8-arm[531 "auto,-4,730"]{pg 531}]{Add, immediate}
+
+◊codeblock{
+1 0 0 1 0 0 0 1 0 shift1 uimm12 Rn5 Rd5
+Rd <= Rn + (uimm << (shift ? 12 : 0))
+}
+
+◊table{
+	◊tr{
+		◊td{shift}
+		◊td{If one, ◊code{uimm} is shifted 12 bits to the left}
+	}
+	◊tr{
+		◊td{uimm}
+		◊td{Unsigned constant integer}
+	}
+}
+
 
 ◊section[3 null]{Sub}
 
@@ -240,10 +297,11 @@ I won't explain all of these here, but know that ◊mono{xor} is also known as �
 ◊section[3 ◊armv8-arm[901 "auto,-4,387"]{pg 901}]{Store, pre-index}
 
 ◊codeblock{
-1 1 1 1 1 0 0 0 0 0 0 imm9 1 1 Rn5 Rt5 
+1 1 1 1 1 0 0 0 0 0 0 imm9 1 1 Rn5 Rt5
+*(Rt + imm) <= Rn
 }
 
-Reads the address `Rn + imm` from memory and stores it into `Rt`.
+Reads the address `Rn + imm` from memory and stores it into the address `Rt`.
 
 
 ◊delete{
@@ -252,10 +310,16 @@ Reads the address `Rn + imm` from memory and stores it into `Rt`.
 
 
 
-	Reads the address `Rn` from memory stores it into `Rt`, then updates `Rn` to `Rn + imm`.
+	Reads the address `Rn` from memory stores it into the address `Rt`, then updates `Rn` to `Rn + imm`.
 
 	```
-	Rt <- *Rn
-	 Rn <- Rn + imm
+	*Rt <- *Rn
+	Rn <- Rn + imm
 	```
 }
+
+◊hr{}
+
+◊b{Is something confusing? Email us!}
+We'd love a chance to help out and improve our documentation.
+Our addresses are listed on our GitHub accounts ◊code{@aaronjanse} and ◊code{@rohantib}.

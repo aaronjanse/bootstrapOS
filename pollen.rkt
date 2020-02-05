@@ -18,6 +18,9 @@
   `(,heading-tag-numbered [[id ,(symbol->string (gensym))]] ,@text " "
   		,(if (null? desc) "" `(span "(" ,desc ")"))))
 
+(define uimm
+	`(abbr ((title, "Unsigned constant")) "uimm"))
+
 ;; use `root` as the place to gather the headings for toc-entries, 
 ;; because it executes last, and thus all the headings will be available
 (define (root . xs)
@@ -105,6 +108,8 @@
 
 (define (codeblock . text)
 	`(pre ,@text)) ; ,(string-join text "\n")
+
+(define instr codeblock)
 
 (define details (default-tag-function 'details))
 (define summary (default-tag-function 'summary))

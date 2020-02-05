@@ -104,6 +104,11 @@ For each character sent to UART, send it back.
 
 Store a bunch of characters to memory, then send them back all at once upon EOF.
 
+## Push Pop
+
+https://community.arm.com/developer/ip-products/processors/b/processors-ip-blog/posts/using-the-stack-in-aarch64-implementing-push-and-pop
+
+
 ## Other Resources
 
 
@@ -127,3 +132,4 @@ https://github.com/Chadderz121/csud
 
 https://github.com/rsta2/circle/blob/master/lib/bcm54213.cpp
 https://en.wikipedia.org/wiki/Media-independent_interface#Reduced_gigabit_media-independent_interface
+

@@ -11,7 +11,7 @@ mkShell {
     })
   ];
   shellHook = ''
-    alias binify="( echo 'obase=16;ibase=2' ; sed -Ee 's/[01]{4}/;\0/g') | bc | xxd -r -p"
+    alias binify="( echo 'obase=16;ibase=2' ; sed -Ee 's/[01]{4}/;\0\n/g') | bc | xxd -r -p"
   	alias emulate="qemu-system-aarch64 -M raspi4 -nographic -monitor none -kernel"
   '';
 }
