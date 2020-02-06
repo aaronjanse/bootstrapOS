@@ -55,8 +55,13 @@
 ; enable UART, transfer, and receive
 ; store 000 0001 1000 0001 into *(r1+0x30)
 
-; store `0x78` (ASCII `x`) into r3
 
-; wait for UART flags register *(r1+0x18) to say we're ready
+
+
+; wait for UART flags register *(r1+0x18) to say we're ready to read
+
+; read into r3
+
+; wait for UART flags register *(r1+0x18) to say we're ready to write
 
 ; store r3 into *(r1+0)

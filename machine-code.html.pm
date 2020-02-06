@@ -49,13 +49,13 @@ After implementing the documented UART setup procedure and writing the code to n
 
 The Raspberry Pi 4 has four cores. Right now, our code is running on all four cores. Using the provided documentation, figure out which cores are not the core you want to stop (e.g. core 0), then put those extra cores to sleep.
 
-### Echo
+◊section[2 null]{Echo}
 
 For each character sent to UART, send it back.
 
-### Cat
+◊section[2 null]{Cat}
 
-Store a bunch of characters to memory, then send them back all at once upon EOF.
+Store a bunch of characters to memory, then send them back all at once we receive a null byte (ASCII code ◊code{0x00}).
 
 ◊section[1 null]{Setting up our Software}
 

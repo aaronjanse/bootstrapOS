@@ -104,7 +104,7 @@ write the baud rate divisor integer (◊mono{BDR_I}) to the ◊arm-periph[183 "1
 
 UART data can be sent by storing ASCII-encoded text in ◊mono{0xFE201000}.
 
-On real hardware, you'll want to...
+On real hardware, you'll want to first wait until the ◊arm-periph[181 "110,-70,329"]{UART flag register} says that the transmit FIFO isn't full.
 
 ◊section[3 null]{Reading}
 
@@ -307,6 +307,13 @@ Rd <= Rn + (uimm << (shift ? 12 : 0))
 
 
 ◊section[3 null]{Sub}
+
+◊section[3 null]{Sub, immediate}
+
+◊codeblock{
+1 1 0 1 0 0 0 1 0 shift1 uimm12 Rn5 Rd5
+Rd <= Rn + (uimm << (shift ? 12 : 0))
+}
 
 ◊section[2 null]{Memory Operations}
 
