@@ -108,6 +108,29 @@ On real hardware, you'll want to first wait until the ◊arm-periph[181 "110,-70
 
 ◊section[3 null]{Reading}
 
+◊section[1 null]{Memory Allocation}
+
+Efficiently allocating memory can be a beast to write in machine code, so we'll put that off until we have a higher-level language to work with. In the mean time, this is the gist of the memory scheme we'll be using on the Raspberry Pi 4: 
+
+◊table{
+	◊tr{
+		◊th{Memory Address(es)}
+		◊th{Usage}
+	}
+	◊tr{
+		◊td{◊code{0x00000-0x80000}}
+		◊td{System stack}
+	}
+	◊tr{
+		◊td{◊code{0x80000-0x300000}}
+		◊td{Machine code}
+	}
+	◊tr{
+		◊td{◊code{0x300000-0x3b3fffff}}
+		◊td{0.99 GB of memory to be used by our machine code}
+	}
+}
+
 ◊section[1 null]{Machine Code Overview}
 
 ◊section[2 ◊armv8-arm[223 "auto,-4,576"]{pg 223}]{Encoding}

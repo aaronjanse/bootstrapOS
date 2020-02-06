@@ -20,6 +20,24 @@ To write our initial machine code, I recommend the following workflow:
 
 Note that, for now, we're manually removing comments and whitespace (instead of using `sed`/`grep` to do so). That's intentional. One of the first compiler functionalities we'll implement will be automatically removing comments and whitespace from a file then parsing the 1s and 0s.
 
+◊section[1 null]{The Plan}
+
+One of the goals of this guide is to make our OS development process minimally frustrating. For that reason, I recommend the following register usage, based on what we'll later need to do:
+
+◊table{
+	◊tr{
+		◊th{Register}
+		◊th{Usage}
+	}
+	◊tr{
+		◊td{◊code{r0} to ◊code{r7}}
+		◊td{For now, keep these unused. The code we're writing right now will be the boilerplate for all future generated code, so we don't want to stomp on easily-memorable registers.}
+	}
+	◊tr{
+		◊td{◊code{}}
+	}
+}
+
 ◊section[1 null]{Using UART}
 
 Before we get started building our self-eating-snake of a compiler, we need to implement a way to get information in & out of our processor. We'll do this via UART.
@@ -57,18 +75,8 @@ For each character sent to UART, send it back.
 
 Store a bunch of characters to memory, then send them back all at once we receive a null byte (ASCII code ◊code{0x00}).
 
-◊section[1 null]{Setting up our Software}
+◊section[1 null]{Parsing Machine Code}
 
-For the time being, this book is written for users of Linux and macOS. The Windows Subsystem for Linux should also work.
 
-We'll use ◊link["https://nixos.org/nix"]{Nix} to manage our software. Once Nix is installed, download the book's source code repo and run ◊code{nix-shell}.
-
-◊codeblock{
-git clone ◊link["https://github.com/aaronjanse/os-book"]{https://github.com/aaronjanse/os-book}
-cd os-book
-nix-shell
-}
-
-You should be put in a bash shell with all the required software installed (in that shell only; none of the rest of your system is dirtied). This shell includes a patched version of qemu, and aliases ◊code{binify} & ◊code{emulate} to make your life easier.
 
 

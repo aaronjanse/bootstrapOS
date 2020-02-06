@@ -28,6 +28,8 @@ Sources:
 
 Stack language notes:
 - I could have a `load` command that pops an address off the top of the stack and push the corresponding value in memory. Same applies to `store`, but with two items off the top of the stack.
+- needs global variables??
+- or, do a `pop memory` command with a `pop address` command
 
 High-level implementation notes:
 - needed stacks:
@@ -36,6 +38,7 @@ High-level implementation notes:
   - discard input
   - shift output
   - reset input length indicator
+- needs memory access via `base[offset]` which can be read or written to
 
 High-level implementation passes:
 - remove comments
@@ -64,7 +67,7 @@ pop local 1
 label whileStart
 
 ;     out = out + a;
-push local 0
+push local 0 ; push *(fn_base_sp+0)
 push param 0
 add?
 pop local 0
@@ -96,6 +99,10 @@ label whileEnd
 
 
 ; }
+```
+
+```
+
 ```
 
 ```

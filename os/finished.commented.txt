@@ -1,0 +1,79 @@
+; to move 0xFE200000 into r0 and 0xFE201000
+; (because the constant doesn't fit into one)
+
+; move 0xFE20 << 16 into r0
+; 1 1 0 1 0 0 1 0 1 hw2 imm16 Rd5
+; Rd <= imm << hw*16
+; r0 <= 0xFE20 << 1*16
+; 1 1 0 1 0 0 1 0 1 01 1111 1110 0010 0000 00000
+; 11010010 10111111 11000100 00000000
+; now, reverse the bytes:
+00000000 11000100 10111111 11010010
+
+; add 0x1000 to r0 to move 0xFE201000 into r1
+
+; disable UART
+; store 0x0 into *(r1+0x30)
+
+; disable GPIO pin pull up/down
+; store 0x0 into *(r0+0x94)
+
+; delay for 150 cycles
+
+;; move 150 into r7
+;; subtract 1 from r7
+;; compare
+;; if we're above zero, jump back two instructions
+
+; disable GPIO pin pull up/down clock 0
+; store 0x0 into *(r0+0x98)
+
+; delay for 150 cycles
+
+; disable GPIO pin pull up/down clock 0
+; store 0x0 into *(r0+0x98)
+
+; clear all pending interrupts
+; store 0x0 into *(r1+0x1044)
+
+; set baud rate to 115200 given a 3 Mhz clock
+; BDR = (3 000 000)/(16 * 115200) = 1.6276
+; BDR_F = 0.6276
+; BDR_I = 1 = 0x1
+; m = int((0.6276*64)+0.5) = 40 = 0x28
+
+;; store 0x1 into *(r1+0x24)
+
+;; store 0x28 into *(r1+0x28)
+
+; enable FIFO and 8-bit data transmission
+; store 0111 0000 into *(r1+0x2C)
+
+; mask all interrupts
+; store 11 1111 0010 into *(r1+0x38)
+
+; enable UART, transfer, and receive
+; store 000 0001 1000 0001 into *(r1+0x30)
+
+
+
+
+; wait for UART flags register *(r1+0x18) to say we're ready to read
+
+; write into memory
+
+; update r3 index
+
+; if null byte, break loop
+
+; loop over bytes, increasing index until null byte break
+
+; if newline
+; - if next is semicolon, scan until end of line
+; - else...
+
+; read into r3
+
+; wait for UART flags register *(r1+0x18) to say we're ready to write
+
+; store r3 into *(r1+0)
