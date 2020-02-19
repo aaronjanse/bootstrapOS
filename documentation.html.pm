@@ -135,38 +135,7 @@ Efficiently allocating memory can be a beast to write in machine code, so we'll 
 
 ◊section[2 ◊armv8-arm[223 "auto,-4,576"]{pg 223}]{Encoding}
 
-Very few people venture below assembly to machine code, so most machine code is described in terms of the equivalent assembly.
-
-For example, let's say we wanted to execute ◊code{r7 <= r2 + 16}.
-
-Once we find the ◊code{add} instruction in the ARMv8 Manual (◊armv8-arm[531 "auto,-4,730"]{pg 531}) or via the documentation below, we see that the encoding for 64-bit ◊code{add} is as follows: 
-
-◊pre{
-sf 0 0 1 0 0 0 1 shift2 imm12 Rn Rd
-}
-
-Note the numbers after some variable names; they indicate how many bits wide their encodings are.
-
-In our case, to do ◊code{r7 <= r2 + 16}, we calculate the following:
-◊codeblock{
-sf = 1
-shift = 00
-imm = 000000010000
-Rn = r2 = 00010
-Rd = r7 = 00111
-}
-
-Therefore, we encode to the following:
-◊codeblock{
-1 0 0 1 0 0 0 1 00 000000010000 00010 00111
-= 10010001 00000000 01000000 01000111
-}
-
-◊i{However}, because our chip is little-endian, we need to reverse the order of the bytes: (whitespace added for clarity)
-
-◊codeblock{
-01000111 01000000 00000000 10010001
-}
+See the machine code tutorial.
 
 ◊section[2 ◊cortex[75 "auto,-12,749"]{pg 75}]{Registers}
 

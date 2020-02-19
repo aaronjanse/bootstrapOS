@@ -8,6 +8,8 @@
 
 Machine code is rarely seen but in movies and by brave souls in real life. It's the lowest level of code that we'll touch. While punching out 1s and 0s will be painful, the experience should be educational and a badge of pride.
 
+◊section[1 null]{Workflow}
+
 To write our initial machine code, I recommend the following workflow:
 ◊ol{
 	◊li{Write the 1s and 0s in a text file with lots of comments and whitespace}
@@ -34,11 +36,57 @@ One of the goals of this guide is to make our OS development process minimally f
 		◊td{For now, keep these unused. The code we're writing right now will be the boilerplate for all future generated code, so we don't want to stomp on easily-memorable registers.}
 	}
 	◊tr{
-		◊td{◊code{}}
+		◊td{◊code{r8}}
+		◊td{0xFE200000 (GPIO offset)}
+	}
+	◊tr{
+		◊td{◊code{r9}}
+		◊td{0xFE201000 (UART offset)}
+	}
+	◊tr{
+		◊td{◊code{r10} to ◊code{r15}}
+		◊td{Miscellaneous}
 	}
 }
 
-◊section[1 null]{Using UART}
+◊section[1 null]{Let's Begin}
+
+◊section[2 null]{Writing Machine Code}
+
+Very few people venture below assembly to machine code, so most machine code is described in terms of the equivalent assembly.
+
+For example, let's say we wanted to execute ◊code{r7 <= r2 + 16}.
+
+Once we find the ◊code{add} instruction in the ARMv8 Manual (◊armv8-arm[531 "auto,-4,730"]{pg 531}) or via the documentation below, we see that the encoding for 64-bit ◊code{add} is as follows: 
+
+◊pre{
+sf 0 0 1 0 0 0 1 shift2 imm12 Rn Rd
+}
+
+Note the numbers after some variable names; they indicate how many bits wide their encodings are.
+
+In our case, to do ◊code{r7 <= r2 + 16}, we calculate the following:
+◊codeblock{
+sf = 1
+shift = 00
+imm = 000000010000
+Rn = r2 = 00010
+Rd = r7 = 00111
+}
+
+Therefore, we encode to the following:
+◊codeblock{
+1 0 0 1 0 0 0 1 00 000000010000 00010 00111
+= 10010001 00000000 01000000 01000111
+}
+
+◊i{However}, because our chip is little-endian, we need to reverse the order of the bytes: (whitespace added for clarity)
+
+◊codeblock{
+01000111 01000000 00000000 10010001
+}
+
+
 
 Before we get started building our self-eating-snake of a compiler, we need to implement a way to get information in & out of our processor. We'll do this via UART.
 
@@ -77,6 +125,57 @@ Store a bunch of characters to memory, then send them back all at once we receiv
 
 ◊section[1 null]{Parsing Machine Code}
 
+
+
+---
+
+◊codeblock{
+var len = 700
+var baseInAddr = BASE_MEM_ADDR+100
+
+fn removeComments {
+	var baseOutAddr = baseInAddr + len
+	var inIdx = 0
+	var outIdx = 0
+	var commentMode = false
+
+	var currentNum = 0
+	var bitNum = 0
+
+	while {
+		var char = baseInAddr[inIdx];
+		if char == 0 {
+			break
+		}
+		if char == '\n' {
+			if commentMode {
+				commentMode = false
+			}
+			if baseInAddr[inIdx+1] == ';' {
+				commentMode = true
+			}
+		}
+		if commentMode {
+			continue
+		}
+		if char != '0' && char != '1'currentNum {
+			continue
+		}
+		currentNum = currentNum << 1
+		currentNum += 1
+
+		if currentNum == 8 {
+			baseOutAddr[outIdx] = currentNum
+			outIdx += 1
+			currentNum = 0
+			currentNum = 0
+		}
+
+		inIdx += 1
+	}
+}
+
+}
 
 
 

@@ -1,16 +1,23 @@
-; to move 0xFE200000 into r0 and 0xFE201000
+; to move 0xFE200000 into r8 and 0xFE201000 into r9
 ; (because the constant doesn't fit into one)
 
-; move 0xFE20 << 16 into r0
+; move 0xFE20 << 16 into r8
 ; 1 1 0 1 0 0 1 0 1 hw2 imm16 Rd5
 ; Rd <= imm << hw*16
-; r0 <= 0xFE20 << 1*16
-; 1 1 0 1 0 0 1 0 1 01 1111 1110 0010 0000 00000
-; 11010010 10111111 11000100 00000000
+; r8 <= 0xFE20 << 1*16
+; 1 1 0 1 0 0 1 0 1 01 1111 1110 0010 0000 01000
+; 11010010 10111111 11000100 00001000
 ; now, reverse the bytes:
-00000000 11000100 10111111 11010010
+00001000 11000100 10111111 11010010
 
-; add 0x1000 to r0 to move 0xFE201000 into r1
+; add 0x1000 to r8 to move 0xFE201000 into r9
+; 1 0 0 1 0 0 0 1 0 shift1 uimm12 Rn5 Rd5
+; Rd <= Rn + (uimm << (shift ? 12 : 0))
+; r9 <= r8 + (0x1 << (1 ? 12 : 0))
+; 1 0 0 1 0 0 0 1 0 1 0000 0000 0001 01000 01001
+; 10010001 01000000 00000101 00001001
+; now, reverse the bytes:
+00001001 00000101 01000000 10010001
 
 ; disable UART
 ; store 0x0 into *(r1+0x30)

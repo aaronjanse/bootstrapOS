@@ -26,6 +26,13 @@ Fermentation is similar to building compilers. New languages are written with ol
 The typical "hello world" operating system starts with the C language, the fancy yogurt. We plan to create our yogurt from scratch.
 
 ◊section[1 null]{Goals}
+
+While asking for advice on how to write this tutorial, my sister provided me with a great analogy for what we're trying to do: build a ship.
+
+Many tutorials walk through which nails to put into which board of woods, explaining what's being built as the ship comes together.
+
+In this tutorial, I hope to teach not just how to build a ship, but how ships are built, similar to what nand2tetris does. I plan to describe what makes a ship float, how a particular ship design fulfils those requirements, and the necessary woodworking skills.
+
 ◊ul{
 	◊li{
 		continue the "expanding self-build toolset" feeling of nand2tetris
