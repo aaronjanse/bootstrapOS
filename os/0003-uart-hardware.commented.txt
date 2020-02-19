@@ -13,10 +13,10 @@
 ; add 0x1000 to r0 to move 0xFE201000 into r1
 
 ; disable UART
-; store 0x0 into *(r1+0x30)
+; store 0x0 into *(r9+0x30)
 
 ; disable GPIO pin pull up/down
-; store 0x0 into *(r0+0x94)
+; store 0x0 into *(r8+0x94)
 
 ; delay for 150 cycles
 
@@ -26,15 +26,15 @@
 ;; if we're above zero, jump back two instructions
 
 ; disable GPIO pin pull up/down clock 0
-; store 0x0 into *(r0+0x98)
+; store 0x0 into *(r8+0x98)
 
 ; delay for 150 cycles
 
 ; disable GPIO pin pull up/down clock 0
-; store 0x0 into *(r0+0x98)
+; store 0x0 into *(r8+0x98)
 
 ; clear all pending interrupts
-; store 0x0 into *(r1+0x1044)
+; store 0x0 into *(r9+0x1044)
 
 ; set baud rate to 115200 given a 3 Mhz clock
 ; BDR = (3 000 000)/(16 * 115200) = 1.6276
@@ -42,21 +42,21 @@
 ; BDR_I = 1 = 0x1
 ; m = int((0.6276*64)+0.5) = 40 = 0x28
 
-;; store 0x1 into *(r1+0x24)
+;; store 0x1 into *(r9+0x24)
 
-;; store 0x28 into *(r1+0x28)
+;; store 0x28 into *(r9+0x28)
 
 ; enable FIFO and 8-bit data transmission
-; store 0111 0000 into *(r1+0x2C)
+; store 0111 0000 into *(r9+0x2C)
 
 ; mask all interrupts
-; store 11 1111 0010 into *(r1+0x38)
+; store 11 1111 0010 into *(r9+0x38)
 
 ; enable UART, transfer, and receive
-; store 000 0001 1000 0001 into *(r1+0x30)
+; store 000 0001 1000 0001 into *(r9+0x30)
 
 ; store `0x78` (ASCII `x`) into r3
 
-; wait for UART flags register *(r1+0x18) to say we're ready
+; wait for UART flags register *(r9+0x18) to say we're ready
 
-; store r3 into *(r1+0)
+; store r3 into *(r9+0)
