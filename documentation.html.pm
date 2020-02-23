@@ -246,7 +246,8 @@ Using constants in logical aarch64 operations can be ◊link["https://news.ycomb
 I won't explain all of these here, but know that ◊code{xor} is also known as ◊code{eor}.
 
 ◊codeblock{
-1 opc2 0 1 0 1 0 shift2 N Rm5 imms6 Rn6 Rd5
+1 opc2 0 1 0 1 0 shift2 N Rm5 imms6 Rn5 Rd5
+Rd <= Rn # Rm
 }
 
 ◊table{
@@ -304,7 +305,7 @@ Rd <= Rn + (uimm << (shift ? 12 : 0))
 
 ◊codeblock{
 1 1 0 1 0 0 0 1 0 shift1 uimm12 Rn5 Rd5
-Rd <= Rn + (uimm << (shift ? 12 : 0))
+Rd <= Rn - (uimm << (shift ? 12 : 0))
 }
 
 ◊section[2 null]{Memory Operations}
@@ -316,7 +317,7 @@ Rd <= Rn + (uimm << (shift ? 12 : 0))
 
 ◊codeblock{
 1 1 1 1 1 0 0 0 0 0 0 imm9 1 1 Rn5 Rt5
-*(Rt + imm) <= Rn
+*(Rn + imm) <= Rt
 }
 
 Reads `Rn` and stores it into the memory address `Rt + imm`.
@@ -326,8 +327,6 @@ Reads `Rn` and stores it into the memory address `Rt + imm`.
 
 	◊section[3 ◊armv8-arm[901 "auto,-4,655"]{pg 901}]{Store, Post-Index}
 
-
-
 	Reads the address `Rn` from memory stores it into the address `Rt`, then updates `Rn` to `Rn + imm`.
 
 	```
@@ -335,6 +334,15 @@ Reads `Rn` and stores it into the memory address `Rt + imm`.
 	Rn <- Rn + imm
 	```
 }
+
+◊section[3 ◊armv8-arm[901 "auto,-4,387"]{pg 901}]{Load, pre-index}
+
+◊codeblock{
+1 1 1 1 1 0 0 0 0 1 0 imm9 1 1 Rn5 Rt5
+Rt <= *(Rn + imm)
+}
+
+Reads `Rn` and stores it into the memory address `Rt + imm`.
 
 ◊section[2 ◊armv8-arm[228 "auto,-4,723"]{pg 228}]{Branching}
 

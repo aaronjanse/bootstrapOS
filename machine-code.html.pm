@@ -20,6 +20,10 @@ To write our initial machine code, I recommend the following workflow:
 	◊li{Optionally run the ◊code{kernel8.img} on real hardware}
 }
 
+section Debugging!!
+
+aarch64-none-elf-objdump -D -b binary -maarch64 /tmp/x.img
+
 Note that, for now, we're manually removing comments and whitespace (instead of using `sed`/`grep` to do so). That's intentional. One of the first compiler functionalities we'll implement will be automatically removing comments and whitespace from a file then parsing the 1s and 0s.
 
 ◊section[1 null]{The Plan}

@@ -1,6 +1,7 @@
 with import <nixpkgs> {};
 
-mkShell {
+stdenv.mkDerivation {
+  name = "os-book-shell";
   buildInputs = with pkgs; [
     pkgsCross.aarch64-embedded.stdenv.cc
     racket
