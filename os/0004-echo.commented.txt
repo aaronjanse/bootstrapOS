@@ -128,10 +128,24 @@
 ; disable GPIO pin pull up/down clock 0
 
 	; store 0x0 into *(r8+0x98)
+	; 1 1 1 1 1 0 0 0 0 0 0 imm9 0 0 Rn5 Rt5
+	; *(Rn + imm) <= Rt
+	; *(r8 + 0x98) <= r31
+	; 1 1 1 1 1 0 0 0 0 0 0 010011000 0 0 01000 11111
+	; 11111000 00001001 10000001 00011111
+	; now, reverse the bytes:
+	00011111 10000001 00001001 11111000
 
 ; clear all pending interrupts
 
-	; store 0x0 into *(r9+0x1044)
+	; store 0x0 into *(r9+0x44)
+	; 1 1 1 1 1 0 0 0 0 0 0 imm9 0 0 Rn5 Rt5
+	; *(Rn + imm) <= Rt
+	; *(r9 + 0x44) <= r31
+	; 1 1 1 1 1 0 0 0 0 0 0 001000100 0 0 01001 11111
+	; 11111000 00000100 01000001 00111111
+	; now, reverse the bytes:
+	00111111 01000001 00000100 11111000
 
 ; set baud rate to 115200 given a ? Mhz clock
 ; NVM, experimentally derived from c3r3s, ignore the following calculations
@@ -150,7 +164,6 @@
 	; 11010010 10000000 00000011 01000000
 	; now, reverse the bytes:
 	01000000 00000011 10000000 11010010
-
 
 	; store r0 into *(r9+0x24)
 	; 1 1 1 1 1 0 0 0 0 0 0 imm9 0 0 Rn5 Rt5
@@ -181,7 +194,6 @@
 	; now, reverse the bytes:
 	00100000 10000001 00000010 11111000
 
-
 ; enable FIFO and 8-bit data transmission
 
 	; move 0000 0000 0111 0000 into r0
@@ -194,6 +206,13 @@
 	00000000 00001110 10000000 11010010
 
 	; store r0 into *(r9+0x2C)
+	; 1 1 1 1 1 0 0 0 0 0 0 imm9 0 0 Rn5 Rt5
+	; *(Rn + imm) <= Rt
+	; *(r9 + 0x2C) <= r0
+	; 1 1 1 1 1 0 0 0 0 0 0 000101100 0 0 01001 00000
+	; 11111000 00000010 11000001 00100000
+	; now, reverse the bytes:
+	00100000 11000001 00000010 11111000
 
 ; mask all interrupts
 
@@ -207,6 +226,13 @@
 	01000000 01111110 10000000 11010010
 
 	; store r0 into *(r9+0x38)
+	; 1 1 1 1 1 0 0 0 0 0 0 imm9 0 0 Rn5 Rt5
+	; *(Rn + imm) <= Rt
+	; *(r9 + 0x38) <= r0
+	; 1 1 1 1 1 0 0 0 0 0 0 000111000 0 0 01001 00000
+	; 11111000 00000011 10000001 00100000
+	; now, reverse the bytes:
+	00100000 10000001 00000011 11111000
 
 ; enable UART, transfer, and receive
 
@@ -220,6 +246,13 @@
 	00100000 00110000 10000000 11010010
 
 	; store r0 into *(r9+0x30)
+	; 1 1 1 1 1 0 0 0 0 0 0 imm9 0 0 Rn5 Rt5
+	; *(Rn + imm) <= Rt
+	; *(r9 + 0x30) <= r0
+	; 1 1 1 1 1 0 0 0 0 0 0 000110000 0 0 01001 00000
+	; 11111000 00000011 00000001 00100000
+	; now, reverse the bytes:
+	00100000 00000001 00000011 11111000
 
 ; write 'x' to UART
 
