@@ -313,12 +313,19 @@ Rd <= Rn - (uimm << (shift ? 12 : 0))
 ◊link["https://people.cs.clemson.edu/~rlowe/cs2310/notes/ln_arm_load_store.pdf"]{Rose Lowe cs2310 Slideshow}
 
 
-◊section[3 ◊armv8-arm[901 "auto,-4,387"]{pg 901}]{Store, pre-index}
+◊section[3 ◊armv8-arm[901 "auto,-4,387"]{pg ???}]{Store, pre-index}
 
 ◊codeblock{
-1 1 1 1 1 0 0 0 0 0 0 imm9 1 1 Rn5 Rt5
+1 1 1 1 1 0 0 1 0 0 uimm12 Rn5 Rt5
+1 1 1 1 1 0 0 1 0 0 0 imm9 0 0 Rn5 Rt5
 *(Rn + imm) <= Rt
+*(Rn + uimm*0) <= Rt
 }
+
+b9000022 	str	w2, [x1]
+1 1 1 1 1 0 0 1 
+                0 0 0 00000
+                           0000 0 0
 
 Reads `Rn` and stores it into the memory address `Rt + imm`.
 
@@ -335,14 +342,14 @@ Reads `Rn` and stores it into the memory address `Rt + imm`.
 	```
 }
 
-◊section[3 ◊armv8-arm[901 "auto,-4,387"]{pg 901}]{Load, pre-index}
+◊section[3 ◊armv8-arm[901 "auto,-4,387"]{pg ???}]{Load, pre-index}
 
 ◊codeblock{
-1 1 1 1 1 0 0 0 0 1 0 imm9 1 1 Rn5 Rt5
-Rt <= *(Rn + imm)
+1 1 1 1 1 0 0 1 0 1 uimm12 Rn5 Rt5
+Rt <= *(Rn + uimm*8)
 }
 
-Reads `Rn` and stores it into the memory address `Rt + imm`.
+Reads `Rn` and stores it into the memory address `Rt + uimm*8`.
 
 ◊section[2 ◊armv8-arm[228 "auto,-4,723"]{pg 228}]{Branching}
 
