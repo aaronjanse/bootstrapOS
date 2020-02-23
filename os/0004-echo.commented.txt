@@ -126,10 +126,12 @@
 	11001100 11111111 11111111 01010100
 
 ; disable GPIO pin pull up/down clock 0
-; store 0x0 into *(r8+0x98)
+
+	; store 0x0 into *(r8+0x98)
 
 ; clear all pending interrupts
-; store 0x0 into *(r9+0x1044)
+
+	; store 0x0 into *(r9+0x1044)
 
 ; set baud rate to 115200 given a ? Mhz clock
 ; NVM, experimentally derived from c3r3s, ignore the following calculations
@@ -181,13 +183,43 @@
 
 
 ; enable FIFO and 8-bit data transmission
-; store 0111 0000 into *(r9+0x2C)
+
+	; move 0000 0000 0111 0000 into r0
+	; 1 1 0 1 0 0 1 0 1 hw2 imm16 Rd5
+	; Rd <= imm << hw*16
+	; r0 <= 0000 0000 0111 0000 << 0*16
+	; 1 1 0 1 0 0 1 0 1 00 0000 0000 0111 0000 00000
+	; 11010010 10000000 00001110 00000000
+	; now, reverse the bytes:
+	00000000 00001110 10000000 11010010
+
+	; store r0 into *(r9+0x2C)
 
 ; mask all interrupts
-; store 11 1111 0010 into *(r9+0x38)
+
+	; move 0000 0011 1111 0010 into r0
+	; 1 1 0 1 0 0 1 0 1 hw2 imm16 Rd5
+	; Rd <= imm << hw*16
+	; r0 <= 0000 0011 1111 0010 << 0*16
+	; 1 1 0 1 0 0 1 0 1 00 0000 0011 1111 0010 00000
+	; 11010010 10000000 01111110 01000000
+	; now, reverse the bytes:
+	01000000 01111110 10000000 11010010
+
+	; store r0 into *(r9+0x38)
 
 ; enable UART, transfer, and receive
-; store 000 0001 1000 0001 into *(r9+0x30)
+
+	; move 0000 0001 1000 0001 into r0
+	; 1 1 0 1 0 0 1 0 1 hw2 imm16 Rd5
+	; Rd <= imm << hw*16
+	; r0 <= 0000 0001 1000 0001 << 0*16
+	; 1 1 0 1 0 0 1 0 1 00 0000 0001 1000 0001 00000
+	; 11010010 10000000 00110000 00100000
+	; now, reverse the bytes:
+	00100000 00110000 10000000 11010010
+
+	; store r0 into *(r9+0x30)
 
 ; write 'x' to UART
 
