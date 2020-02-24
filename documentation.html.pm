@@ -1,5 +1,10 @@
 #lang pollen
 
+Mistakes to look out for:
+- accidently conditional jump
+- wrong order of registers for load/store
+
+
 Almost everything you'll need is in the ◊armv8-arm[1 null]{ARMv8 Architecture Reference Manual} and ◊cortex[1 null]{Cortex-72A Processor Technical Reference Manual}. I highly recommend downloading a copy of each PDF. Some of their contents are reproduced below.
 
 ◊section[1 null]{Terminology}
@@ -316,8 +321,8 @@ Rd <= Rn - (uimm << (shift ? 12 : 0))
 ◊section[3 ◊armv8-arm[901 "auto,-4,387"]{pg ???}]{Store}
 
 ◊codeblock{
-1 1 1 1 1 0 0 0 0 0 0 imm9 0 0 Rn5 Rt5
-*(Rn + imm) <= Rt
+1 0 1 1 1 0 0 0 0 0 0 imm9 0 0 Rn5 Rt5
+*(Rn + imm) <= (Rt or SP)
 }
 
 b9000022 	str	w2, [x1]
