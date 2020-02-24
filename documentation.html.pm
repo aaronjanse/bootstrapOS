@@ -345,9 +345,17 @@ Reads `Rn` and stores it into the memory address `Rt + imm`.
 	```
 }
 
+LOAD BYTE https://static.docs.arm.com/ddi0487/ca/DDI0487C_a_armv8_arm.pdf#page=704&zoom=auto,-4,732
+
+◊section[3 ◊armv8-arm[702 "auto,-4,295"]{pg 702}]{Load Byte}
+
+◊codeblock{
+0 0 1 1 1 0 0 1 0 1 imm12 Rn5 Rt5
+Rt <= *(Rn + imm)
+}
+
 ◊section[3 ◊armv8-arm[769 "auto,-4,731"]{pg 769}]{Load}
 
-LDUR https://static.docs.arm.com/ddi0487/ca/DDI0487C_a_armv8_arm.pdf#page=769&zoom=auto,-4,731
 
 ◊codeblock{
 1 1 1 1 1 0 0 0 0 1 0 imm9 0 0 Rn5 Rt5
