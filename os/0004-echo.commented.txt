@@ -77,7 +77,7 @@
 	; now, reverse the bytes:
 	11001100 11111111 11111111 01010100
 
-; what the hell am I doing
+; ahhhhhhhhhhhhhhhh
 
 	; move 1100 0000 0000 0000 into r0
 	; 1 1 0 1 0 0 1 0 1 hw2 imm16 Rd5
@@ -169,14 +169,23 @@
 
 ; clear all pending interrupts
 
-	; store 0x0 into *(r9+0x44)
+	; move 0x7ff into r0
+	; 1 1 0 1 0 0 1 0 1 hw2 imm16 Rd5
+	; Rd <= imm << hw*16
+	; r0 <= 0x7ff << 0*16
+	; 1 1 0 1 0 0 1 0 1 00 0000 0111 1111 1111 00000
+	; 11010010 10000000 11111111 11100000
+	; now, reverse the bytes:
+	11100000 11111111 10000000 11010010
+
+	; store r0 into *(r9+0x44)
 	; 1 0 1 1 1 0 0 0 0 0 0 imm9 0 0 Rn5 Rt5
 	; *(Rn + imm) <= Rt
-	; *(r9 + 0x44) <= r31
-	; 1 0 1 1 1 0 0 0 0 0 0 001000100 0 0 01001 11111
-	; 10111000 00000100 01000001 00111111
+	; *(r9 + 0x44) <= r0
+	; 1 0 1 1 1 0 0 0 0 0 0 001000100 0 0 01001 00000
+	; 10111000 00000100 01000001 00100000
 	; now, reverse the bytes:
-	00111111 01000001 00000100 10111000
+	00100000 01000001 00000100 10111000
 
 ; set baud rate to 115200 given a ? Mhz clock
 ; NVM, experimentally derived from c3r3s, ignore the following calculations
@@ -267,14 +276,15 @@
 
 ; enable UART, transfer, and receive
 
-	; move 0000 0001 1000 0001 into r0
+  ; 0x301
+	; move 0000 0011 0000 0001 into r0
 	; 1 1 0 1 0 0 1 0 1 hw2 imm16 Rd5
 	; Rd <= imm << hw*16
 	; r0 <= 0000 0001 1000 0001 << 0*16
-	; 1 1 0 1 0 0 1 0 1 00 0000 0001 1000 0001 00000
-	; 11010010 10000000 00110000 00100000
+	; 1 1 0 1 0 0 1 0 1 00 0000 0011 0000 0001 00000
+	; 11010010 10000000 01100000 00100000
 	; now, reverse the bytes:
-	00100000 00110000 10000000 11010010
+	00100000 01100000 10000000 11010010
 
 	; store r0 into *(r9+0x30)
 	; 1 0 1 1 1 0 0 0 0 0 0 imm9 0 0 Rn5 Rt5
@@ -352,6 +362,14 @@
 	; now, reverse the bytes:
 	00100000 00001101 00000000 10111000
 
+; move 0x300100 into r11 (our memory address base)
+
+	; move 0x30 << 16 into r11
+
+	; add 0x100 to r11
+
+; move r11 into r12 (our input address register)
+
 ; wait for UART flags register *(r9+0x18) to say we're ready to read
 
 	; move 0x10 (1<<4) into r0
@@ -407,6 +425,90 @@
 ; 00111001 01000000 00000001 00100010
 ; now, reverse the bytes:
 00100010 00000001 01000000 00111001
+
+; copy r2 into *r12
+
+; add 0x1 to r12
+
+; compare r2 to r31
+
+; if not equal, jump back nine instructions
+
+
+
+
+; move r11 into r12
+
+
+
+; # beginning of line
+
+; load *r12 into r10
+
+; add 0x1 to r12
+
+; move ';' into r13
+
+; compare r10 to r13
+
+; if not equal (r10 != ';'), jump forward XX instructions
+	
+	; # we're a comment
+
+		; # slurp comment line
+
+		; load *r12 into r10
+
+		; add 0x1 to r12
+
+		; move '\n' into r13
+
+		; compare r10 to r13
+
+	; if not equal (r10 != '\n'), jump back four instructions
+
+	; jump back XX instructions to code for beginning of line
+
+; # we're not a comment
+
+; move '0' into r13
+
+; compare r10 to r13
+
+; if not equal (r10 != '0'), jump forward XX instructions
+
+	; 
+
+; load *r12 into r10
+
+; add 0x1 to r12
+
+; move '1' into r13
+
+; compare r10 to r13
+
+; if not equal (r10 != '1'), jump forward XX instructions
+
+
+
+
+
+; compare r10 to r13
+
+; if not equal (r10 != '\n'), jump forward XX instructions
+
+	; # check if the next char is ';'
+
+	; add 0x1 to r12
+
+	; load *r12 into r10
+
+	
+
+
+
+
+; add 0x1 to r12
 
 ; wait for UART flags register *(r9+0x18) to say we're ready to write
 

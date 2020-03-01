@@ -1,10 +1,41 @@
-<html> <head> <meta charset="UTF-8"/> <link
-href="https://fonts.googleapis.com/css?family=Crimson+Text&display=swap"
-rel="stylesheet"> <style> * { font-family: 'Crimson Text', serif; } blockquote
-{ padding-left: 10px; border-left: #cdcdcd 3px solid; margin-left: 0; }
-#sidebar { position: absolute; left: 2em; font-weight: bold; } #pages a {
-/*color: #133da2;*/ color: inherit; } #pages a:hover { text-decoration:
-underline; } a { color: #3467ff; }
+<html>
+<head>
+        <meta charset="UTF-8"/>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-79457306-2"></script>
+        <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+
+          gtag('config', 'UA-79457306-2');
+        </script>
+
+        <link href="https://fonts.googleapis.com/css?family=Crimson+Text&display=swap" rel="stylesheet">
+        <style>
+                * {
+                        font-family: 'Crimson Text', serif;
+                }
+                blockquote {
+                        padding-left: 10px;
+                        border-left: #cdcdcd 3px solid;
+                        margin-left: 0;
+                }
+                #sidebar {
+                        position: absolute;
+                        left: 2em;
+                        font-weight: bold;
+                }
+                #pages a {
+                        /*color: #133da2;*/
+                        color: inherit;
+                }
+                #pages a:hover {
+                        text-decoration: underline;
+                }
+                a {
+                        color: #3467ff;
+                }
 
                 th:nth-of-type(2) {
                         text-align: left;
@@ -98,13 +129,14 @@ underline; } a { color: #3467ff; }
                         <br>
                         <a href="introduction.html">Introduction</a><br>
                         <a href="machine-code.html">Machine Code</a><br>
-                        Assembly<br>
-                        Stack Language<br>
-                        Curly Braces<br>
+                        <a href="machine-code.html">Assembly</a><br>
+                        <a href="machine-code.html">Stack Language</a><br>
+                        <a href="machine-code.html">High-level Language</a><br>
+                        <a href="ethernet.html">Ethernet</a><br>
                         <br>
                 </div>
                 <div id="toc-head">Introduction</div>
-                <div id="toc"><div class="nav2"><a href="#g1535">Goals</a></div><div class="nav2"><a href="#g1536">The Plan</a></div><div class="nav2"><a href="#g1537">Setting up our Software</a></div></div>
+                <div id="toc"><div class="nav2"><a href="#g2138">Goals</a></div><div class="nav2"><a href="#g2139">The Plan</a></div><div class="nav2"><a href="#g2140">Setting up our Software</a></div></div>
         </div>
 <span id="reset-counter"></span>
   <p>[Analogy of some yogurt fermentation process where old yogurt is used to make new yogurt].</p><p>Fermentation is similar to building compilers. New languages are written with old languages.</p><ol><li>Algol 60 was <a href="http://foldoc.org/Automated%20Engineering%20Design">extended to create</a> the language AED.</li>
@@ -112,11 +144,11 @@ underline; } a { color: #3467ff; }
   <li>BCPL was used to write the first B compiler</li>
   <li>     B was used to re-implement the B compiler
   <span></span></li>
-  <li>The B langauge/compiler was <a href="https://www.bell-labs.com/usr/dmr/www/chist.html">iteratively transformed</a> into the C language/compiler.</li></ol><p>The typical "hello world" operating system starts with the C language, the fancy yogurt. We plan to create our yogurt from scratch.</p><h2 id="g1535">Goals </h2><p>While asking for advice on how to write this tutorial, my sister provided me with a great analogy for what we're trying to do: build a ship.</p><p>Many tutorials walk through which nails to put into which board of woods, explaining what's being built as the ship comes together.</p><p>In this tutorial, I hope to teach not just how to build a ship, but how ships are built, similar to what nand2tetris does. I plan to describe what makes a ship float, how a particular ship design fulfils those requirements, and the necessary woodworking skills.</p><ul><li>continue the "expanding self-build toolset" feeling of nand2tetris</li>
+  <li>The B langauge/compiler was <a href="https://www.bell-labs.com/usr/dmr/www/chist.html">iteratively transformed</a> into the C language/compiler.</li></ol><p>The typical "hello world" operating system starts with the C language, the fancy yogurt. We plan to create our yogurt from scratch.</p><h2 id="g2138">Goals </h2><p>While asking for advice on how to write this tutorial, my sister provided me with a great analogy for what we're trying to do: build a ship.</p><p>Many tutorials walk through which nails to put into which board of woods, explaining what's being built as the ship comes together.</p><p>In this tutorial, I hope to teach not just how to build a ship, but how ships are built, similar to what nand2tetris does. I plan to describe what makes a ship float, how a particular ship design fulfils those requirements, and the necessary woodworking skills.</p><ul><li>continue the "expanding self-build toolset" feeling of nand2tetris</li>
   <li>provide readers with plenty of documentation</li>
   <li>create plenty of non-frustrating exercises for the reader</li>
   <li>don't worry about accurately receating the historical path to contemporary OSes</li>
-  <li>don't worry about re-implementing existing languages</li></ul><h2 id="g1536">The Plan </h2><p>Earlier, we read that the B language/compiler was iteratively transformed into the C language/compiler. We plan on going through a similar process to elevate ourselves from machine code to a janky high-level language.</p><p>Once we implement a hacked-together high-level language, we'll rewrite the language's compiler in itself, adding features such as useful error reporting.</p><p>Once we have a non-painful language to work with, we'll begin implementing user-facing code, our end goal being to build a <a href="https://gopher.tildeverse.org/zaibatsu.circumlunar.space/1/~solderpunk/gemini">gemini client &amp; server</a>.</p><p><b>Long-term Goals</b></p><ul><li>ethernet</li>
+  <li>don't worry about re-implementing existing languages</li></ul><h2 id="g2139">The Plan </h2><p>Earlier, we read that the B language/compiler was iteratively transformed into the C language/compiler. We plan on going through a similar process to elevate ourselves from machine code to a janky high-level language.</p><p>Once we implement a hacked-together high-level language, we'll rewrite the language's compiler in itself, adding features such as useful error reporting.</p><p>Once we have a non-painful language to work with, we'll begin implementing user-facing code, our end goal being to build a <a href="https://gopher.tildeverse.org/zaibatsu.circumlunar.space/1/~solderpunk/gemini">gemini client &amp; server</a>.</p><p><b>Long-term Goals</b></p><ul><li>ethernet</li>
   <li>netcat io <span></span></li>
   <li>tls
   <ul><li>v1.3</li>
@@ -124,7 +156,7 @@ underline; } a { color: #3467ff; }
   <li>poly1305</li>
   <li>sha256</li></ul></li>
   <li>gemini client</li>
-  <li>gemini server</li></ul><h2 id="g1537">Setting up our Software </h2><p>For the time being, this book is written for users of Linux and macOS. The Windows Subsystem for Linux should also work.</p><p>We'll use <a href="https://nixos.org/nix">Nix</a> to manage our software. Once Nix is installed, download the book's source code repo and run <code>nix-shell</code>.</p><pre>git clone <a href="https://github.com/aaronjanse/os-book">https://github.com/aaronjanse/os-book</a>
+  <li>gemini server</li></ul><h2 id="g2140">Setting up our Software </h2><p>For the time being, this book is written for users of Linux and macOS. The Windows Subsystem for Linux should also work.</p><p>We'll use <a href="https://nixos.org/nix">Nix</a> to manage our software. Once Nix is installed, download the book's source code repo and run <code>nix-shell</code>.</p><pre>git clone <a href="https://github.com/aaronjanse/os-book">https://github.com/aaronjanse/os-book</a>
   cd os-book
   nix-shell</pre><p>You should be put in a bash shell with all the required software installed (in that shell only; none of the rest of your system is dirtied). This shell includes a patched version of qemu, and aliases <code>binify</code> &amp; <code>emulate</code> to make your life easier.</p>
 </body>
