@@ -29,7 +29,7 @@ Sources:
 Stack language notes:
 - I could have a `load` command that pops an address off the top of the stack and push the corresponding value in memory. Same applies to `store`, but with two items off the top of the stack.
 - needs global variables??
-- or, do a `pop memory` command with a `pop address` command
+; - or, do a `pop memory` command with a `pop address` command
 
 High-level implementation notes:
 - needed stacks:

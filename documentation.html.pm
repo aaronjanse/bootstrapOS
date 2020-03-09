@@ -7,6 +7,37 @@ Mistakes to look out for:
 
 Almost everything you'll need is in the ◊armv8-arm[1 null]{ARMv8 Architecture Reference Manual} and ◊cortex[1 null]{Cortex-72A Processor Technical Reference Manual}. I highly recommend downloading a copy of each PDF. Some of their contents are reproduced below.
 
+◊section[1 null]{Plan}
+
+◊ol{
+	◊li{print to qemu uart}
+	◊li{properly setup uart, wait for write, print 'x'}
+	◊li{wait for read, read, print uart input}
+	◊li{functionify uart printing, putting it at the beginning of code and jumping past}
+	◊li{read to memory until \0, then print all memory}
+	◊li{copy memory to output section, removing comments, print instead from output memory}
+	◊li{copy memOut to memIn, then copy back to memOut while converting ascii 1s and 0s to real binary (ignore other characters)}
+
+	◊li{movify the previous binifier to convert into little endian}
+	◊li{print '!' and exit if a line doesn't have 32 bits}
+}
+
+- write all to memory then dump memory in
+- copy mem_in to mem_out then modify above code to print mem_out
+- routine to read a certain number of bits to memory
+- modify above routine to print '!' and exit upon error
+- `b`: command for binary machine code (remember to remove leading whitespace)
+- print '?' when unrecognize command prefix
+- var-length binifying
+- decimal parsing (with negatives; slurp trailing whitespace)
+- `jjj`: relative jump with decimal
+- `call`: abs-pos jump with decimal
+  - keep track of current instruction number
+- rewrite above routines into functions
+- register names
+- conditional jump
+- function labels
+
 ◊section[1 null]{Terminology}
 
 These are the search terms you're looking for.
