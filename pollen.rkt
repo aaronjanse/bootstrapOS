@@ -51,6 +51,13 @@
 
 (define (pars . content) (parify content))
 
+(define (check ischecked content) (if ischecked
+`(input ((type "checkbox") (checked "true")) " " ,content)
+`(input ((type "checkbox")) " " ,content)
+)
+	
+)
+
 (define (date year month day)
 	`(h2 ,(number->string year)
 		"-"
