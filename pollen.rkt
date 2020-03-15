@@ -52,11 +52,8 @@
 (define (pars . content) (parify content))
 
 (define (check ischecked content) (if ischecked
-`(input ((type "checkbox") (checked "true") (onclick "return false")) " " ,content)
-`(input ((type "checkbox") (onclick "return false")) " " ,content)
-)
-	
-)
+	`(input ((type "checkbox") (checked "true") (onclick "return false")) " " ,content)
+	`(input ((type "checkbox") (onclick "return false")) " " ,content)))
 
 (define (date year month day)
 	`(h2 ,(number->string year)
