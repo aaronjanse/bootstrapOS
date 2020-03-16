@@ -902,15 +902,6 @@
 	; now, reverse the bytes:
 	10101110 00000001 00001100 11001011
 
-	; subtract 1 from r14
-	; 1 1 0 1 0 0 0 1 0 shift1 uimm12 Rn5 Rd5
-	; Rd <= Rn - (uimm << (shift ? 12 : 0))
-	; r14 <= r14 - (1 << (0 ? 12 : 0))
-	; 1 1 0 1 0 0 0 1 0 0 0000 0000 0001 01110 01110
-	; 11010001 00000000 00000101 11001110
-	; now, reverse the bytes:
-	11001110 00000101 00000000 11010001
-
 ; # print length in four bytes
 
 	; move 0xff into r3
