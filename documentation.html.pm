@@ -13,7 +13,7 @@ Almost everything you'll need is in the ◊armv8-arm[1 null]{ARMv8 Architecture 
 ◊check[#true]{copy mem_in to mem_out then modify above code to print mem_out}
 ◊check[#true]{use bytes to indicate length of output}
 ◊check[#true]{routine to read a certain number of bits to memory, use it to copy machine code}
-◊check[#false]{remove leading whitespace, `;` command for comments}
+◊check[#true]{remove leading whitespace, `;` command for comments}
 ◊check[#false]{print raw binary}
 
 ◊b{Milestone: big-endian machine code}
