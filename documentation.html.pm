@@ -10,11 +10,11 @@ Almost everything you'll need is in the ◊armv8-arm[1 null]{ARMv8 Architecture 
 ◊check[#true]{write all to memory then dump memory in}
 ◊check[#true]{copy mem_in to mem_out then modify above code to print mem_out}
 ◊check[#true]{use bytes to indicate length of output}
-◊check[#false]{routine to read a certain number of bits to memory, use it to copy machine code}
+◊check[#true]{routine to read a certain number of bits to memory, use it to copy machine code}
 ◊check[#false]{remove leading whitespace, `;` command for comments, `b` command for machine code}
 ◊check[#false]{print raw binary}
 
-- We've bootstrapped commented machine code!
+◊check[#false]{MILESTONE: bootstrapped machine code with comments!}
 
 ◊check[#false]{print binary in little-endian form}
 ◊check[#false]{var-length binifying}
