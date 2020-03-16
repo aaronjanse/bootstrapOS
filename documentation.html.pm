@@ -4,6 +4,8 @@ Almost everything you'll need is in the ◊armv8-arm[1 null]{ARMv8 Architecture 
 
 ◊section[1 null]{Plan}
 
+
+◊b{Milestone: bootstrap machine code}
 ◊check[#true]{print to qemu uart}
 ◊check[#true]{properly setup uart, wait for write, print 'x'}
 ◊check[#true]{wait for read, read, print uart input}
@@ -11,20 +13,23 @@ Almost everything you'll need is in the ◊armv8-arm[1 null]{ARMv8 Architecture 
 ◊check[#true]{copy mem_in to mem_out then modify above code to print mem_out}
 ◊check[#true]{use bytes to indicate length of output}
 ◊check[#true]{routine to read a certain number of bits to memory, use it to copy machine code}
-◊check[#false]{remove leading whitespace, `;` command for comments, `b` command for machine code}
+◊check[#false]{remove leading whitespace, `;` command for comments}
 ◊check[#false]{print raw binary}
 
-◊check[#false]{MILESTONE: bootstrapped machine code with comments!}
-
+◊b{Milestone: big-endian machine code}
 ◊check[#false]{print binary in little-endian form}
+◊check[#false]{rewrite code in big-endian form}
+
+◊b{Milestone: assembly functions (labeled, linked branching)}
 ◊check[#false]{var-length binifying}
 ◊check[#false]{decimal parsing (with negatives; slurp trailing whitespace)}
-◊check[#false]{`jjj`: relative jump with decimal}
-◊check[#false]{`call`: abs-pos jump with decimal (keep track of current instruction number)}
+◊check[#false]{`JUMP`: relative branch with decimal}
+◊check[#false]{`L`: function labels (read into memory tape with scheme `pos4 name \0`)}
+◊check[#false]{`call`: abs-pos linking branch with label (keep track of current instruction number)}
 ◊check[#false]{rewrite above routines into functions}
+
 ◊check[#false]{register names}
 ◊check[#false]{conditional jump}
-◊check[#false]{function labels}
 
 ◊section[1 null]{Terminology}
 
@@ -352,13 +357,12 @@ Rd <= Rn - (uimm << (shift ? 12 : 0))
 *(Rn + imm) <= (Rt or SP)
 }
 
-b9000022 	str	w2, [x1]
-1 1 1 1 1 0 0 1 
-                0 0 0 00000
-                           0000 0 0
+◊section[3 ◊armv8-arm[702 "auto,-4,295"]{pg 702}]{Store Byte}
 
-Reads `Rn` and stores it into the memory address `Rt + imm`.
-
+◊codeblock{
+0 0 1 1 1 0 0 1 0 0 imm12 Rn5 Rt5
+Rt <= *(Rn + imm)
+}
 
 ◊delete{
 
