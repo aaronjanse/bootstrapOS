@@ -451,6 +451,7 @@
 	; 10010001 00000000 00000101 10101101
 	; now, reverse the bytes:
 	10101101 00000101 00000000 10010001
+
 	; compare r2 to r31
 	; 1 1 1 1 1 0 1 0 0 1 0 Rm5 1 1 1 1 0 0 Rn5 0 0 0 0 0
 	; Rn ? Rm
@@ -540,10 +541,10 @@
 			; 1 1 0 1 0 0 1 0 1 hw2 imm16 Rd5
 			; Rd <= imm << hw*16
 			; r2 <= 0x21 << 0*16
-			; 1 1 0 1 0 0 1 0 1 00 0000 0000 0000 1011 00001
-			; 11010010 10000000 00000001 01100001
+			; 1 1 0 1 0 0 1 0 1 00 0000 0000 0000 1001 00001
+			; 11010010 10000000 00000001 00100001
 			; now, reverse the bytes:
-			01100001 00000001 10000000 11010010
+			00100001 00000001 10000000 11010010
 
 			; compare r1 to r2
 			; 1 1 1 1 1 0 1 0 0 1 0 Rm5 1 1 1 1 0 0 Rn5 0 0 0 0 0
@@ -554,20 +555,20 @@
 			; now, reverse the bytes:
 			00100000 11110000 01000010 11111010
 
-			; if equal, jump back 3 instructions to beginning of loop
+			; if equal, jump back 7 instructions to beginning of loop
 			; 0 1 0 1 0 1 0 0 imm19 0 cond4
-			; imm = -3 ; cond = 0000
-			; 0 1 0 1 0 1 0 0 111 1111 1111 1111 1101 0 0000
-			; 01010100 11111111 11111111 10100000
+			; imm = -7 ; cond = 0000
+			; 0 1 0 1 0 1 0 0 111 1111 1111 1111 1001 0 0000
+			; 01010100 11111111 11111111 00100000
 			; now, reverse the bytes:
-			10100000 11111111 11111111 01010100
+			00100000 11111111 11111111 01010100
 
 		; # handle ascii bits
 
 			; set r1 to '0' (0x30)
 			; 1 1 0 1 0 0 1 0 1 hw2 imm16 Rd5
 			; Rd <= imm << hw*16
-			; r2 <= 0x21 << 0*16
+			; r1 <= 0x30 << 0*16
 			; 1 1 0 1 0 0 1 0 1 00 0000 0000 0011 0000 00001
 			; 11010010 10000000 00000110 00000001
 			; now, reverse the bytes:
@@ -582,13 +583,13 @@
 			; now, reverse the bytes:
 			00100000 11110000 01000010 11111010
 
-			; if equal, jump forward 3 instructions to ascii bit routine
+			; if equal, jump forward 5 instructions to ascii bit routine
 			; 0 1 0 1 0 1 0 0 imm19 0 cond4
-			; imm = 3 ; cond = 0000
-			; 0 1 0 1 0 1 0 0 000 0000 0000 0000 0011 0 0000
-			; 01010100 00000000 00000000 01100000
+			; imm = 5 ; cond = 0000
+			; 0 1 0 1 0 1 0 0 000 0000 0000 0000 0101 0 0000
+			; 01010100 00000000 00000000 10100000
 			; now, reverse the bytes:
-			01100000 00000000 00000000 01010100
+			10100000 00000000 00000000 01010100
 
 			; set r1 to '1' (0x31)
 			; 1 1 0 1 0 0 1 0 1 hw2 imm16 Rd5
@@ -617,12 +618,11 @@
 			01000000 00000000 00000000 01010100
 
 			; jump forward 7 instructions past ascii bit routine
-			; 0 1 0 1 0 1 0 0 imm19 0 cond4
-			; imm = 7 ; cond = 1111
-			; 0 1 0 1 0 1 0 0 000 0000 0000 0000 0111 0 01111
-			; 01010100 00000000 00000001 11001111
+			; 0 0 0 1 0 1 imm26
+			; 0 0 0 1 0 1 00 0000 0000 0000 0000 0000 0111
+			; 00010100 00000000 00000000 00000111
 			; now, reverse the bytes:
-			11001111 00000001 00000000 01010100
+			00000111 00000000 00000000 00010100
 
 			; # routine for ascii bits
 
@@ -635,13 +635,13 @@
 				; now, reverse the bytes:
 				01100000 11110000 01011111 11111010
 
-				; if equal, jump forward 7 instructions past end of loop
+				; if equal, jump forward 32 instructions past end of loop
 				; 0 1 0 1 0 1 0 0 imm19 0 cond4
 				; imm = 7 ; cond = 0000
-				; 0 1 0 1 0 1 0 0 000 0000 0000 0000 0111 0 00000
-				; 01010100 00000000 00000001 11000000
+				; 0 1 0 1 0 1 0 0 000 0000 0000 0010 0000 0 0000
+				; 01010100 00000000 00000100 00000000
 				; now, reverse the bytes:
-				11000000 00000001 00000000 01010100
+				00000000 00000100 00000000 01010100
 
 				; subtract 1 from r3
 				; 1 1 0 1 0 0 0 1 0 shift1 uimm12 Rn5 Rd5
@@ -672,13 +672,12 @@
 					; now, reverse the bytes:
 					10101101 00000101 00000000 10010001
 
-					; jump back 13 instructions to beginning of loop
-					; 0 1 0 1 0 1 0 0 imm19 0 cond4
-					; imm = -13 ; cond = 0000
-					; 0 1 0 1 0 1 0 0 111 1111 1111 1111 0011 0 0000
-					; 01010100 11111111 11111110 01100000
+					; jump back 20 instructions to beginning of loop
+					; 0 0 0 1 0 1 imm26
+					; 0 0 0 1 0 1 11 1111 1111 1111 1111 1110 1100
+					; 00010111 11111111 11111111 11101100
 					; now, reverse the bytes:
-					01100000 11111110 11111111 01010100
+					11101100 11111111 11111111 00010111
 
 		; # handle unrecognized characters
 
@@ -700,15 +699,24 @@
 			; now, reverse the bytes:
 			01100000 11110000 01011111 11111010
 
-			; if equal, jump forward 24 instructions past end of loop
+			; if equal, jump forward 25 instructions past end of loop
 			; 0 1 0 1 0 1 0 0 imm19 0 cond4
 			; imm = 24 ; cond = 0000
-			; 0 1 0 1 0 1 0 0 000 0000 0000 0001 1000 0 0000
-			; 01010100 00000000 00000011 00000000
+			; 0 1 0 1 0 1 0 0 000 0000 0000 0001 1001 0 0000
+			; 01010100 00000000 00000011 00100000
 			; now, reverse the bytes:
-			00000000 00000011 00000000 01010100
+			00100000 00000011 00000000 01010100
 
 			; # unexpected non-binary character error
+
+				; copy r2 to r15
+				; 1 0 0 1 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 Rn5 Rd5
+			  ; (Rd or *SP) <= (Rn or *SP)
+			  ; r15 <= r2
+			  ; 1 0 0 1 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 00010 01111
+			  ; 10010001 00000000 00000000 01001111
+			  ; now, reverse the bytes:
+			  01001111 00000000 00000000 10010001
 
 				; set r2 to '!' (0x21)
 				; 1 1 0 1 0 0 1 0 1 hw2 imm16 Rd5
@@ -782,12 +790,11 @@
 				01011111 00100000 00000011 11010101
 
 				; jump back one instruction
-			; 0 1 0 1 0 1 0 0 imm19 0 cond4
-			; imm = -1 ; cond = 1111
-			; 0 1 0 1 0 1 0 0 111 1111 1111 1111 1111 0 1111
-			; 01010100 11111111 11111111 11100000
-			; now, reverse the bytes:
-			11100000 11111111 11111111 01010100
+				; 0 0 0 1 0 1 imm26
+				; 0 0 0 1 0 1 11 1111 1111 1111 1111 1111 1111
+				; 00010111 11111111 11111111 11111111
+				; now, reverse the bytes:
+				11111111 11111111 11111111 00010111
 
 	; set r1 to '\n' (10)
 	; 1 1 0 1 0 0 1 0 1 hw2 imm16 Rd5
@@ -824,12 +831,13 @@
 	; now, reverse the bytes:
 	01000000 11110000 01011111 11111010
 
-	; if not equal, jump back 2 intructions to beginning of compiler loop
+	; if not equal, jump back 29 intructions to beginning of compiler loop
 	; 0 1 0 1 0 1 0 0 imm19 0 cond4
-	; imm = -5 ; cond = 0001
-	; 0 1 0 1 0 1 0 0 111 1111 1111 1111 10111 0 0001
-	; 01010100 11111111 11111111 01100001
+	; imm = -29 ; cond = 0001
+	; 0 1 0 1 0 1 0 0 111 1111 1111 1110 0011 0 0001
+	; 01010100 11111111 11111100 01100001
 	; now, reverse the bytes:
+	01100001 11111100 11111111 01010100
 
 	; # unrecognized character error
 
@@ -899,8 +907,27 @@
 			00100010 00000001 00000000 10111000
 
 		; enter sleep state
+		; 1101 0101 0000 0011 0010 0000 0101 1111
+		; 11010101 00000011 00100000 01011111
+		; now, reverse the bytes:
+		01011111 00100000 00000011 11010101
 
 		; jump back one instruction
+		; 0 0 0 1 0 1 imm26
+		; 0 0 0 1 0 1 11 1111 1111 1111 1111 1111 1111
+		; 00010111 11111111 11111111 11111111
+		; now, reverse the bytes:
+		11111111 11111111 11111111 00010111
+
+; set r15 to '\n' (10)
+; 1 1 0 1 0 0 1 0 1 hw2 imm16 Rd5
+; Rd <= imm << hw*16
+; r2 <= 0x21 << 0*16
+; 1 1 0 1 0 0 1 0 1 00 0000 0000 0000 1010 01111
+; 11010010 10000000 00000001 01001111
+; now, reverse the bytes:
+01001111 00000001 10000000 11010010
+
 
 ; # compute length of output
 
@@ -1226,6 +1253,17 @@
 		; 10111000 00000000 00000001 00100010
 		; now, reverse the bytes:
 		00100010 00000001 00000000 10111000
+
+; # move r12 head forward one, past end null byte of memIn to memOut
+
+	; add 0x1 to r12
+	; 1 0 0 1 0 0 0 1 0 shift1 uimm12 Rn5 Rd5
+	; Rd <= Rn + (uimm << (shift ? 12 : 0))
+	; r12 <= r12 + (0x1 << (0 ? 12 : 0))
+	; 1 0 0 1 0 0 0 1 0 0 0000 0000 0001 01100 01100
+	; 10010001 00000000 00000101 10001100
+	; now, reverse the bytes:
+	10001100 00000101 00000000 10010001
 
 ; # print memOut to uartOut
 

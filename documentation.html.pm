@@ -453,10 +453,6 @@ Compares Rn to Rm. Used before a conditional jump.
 		◊td{◊code{1010}}
 		◊td{Greater Than or Equal}
 	}
-	◊tr{
-		◊td{◊code{1111}}
-		◊td{Always}
-	}
 }
 
 ◊code{imm} is a signed constant that specificies how many instructions forward/backwards the processor should jump.

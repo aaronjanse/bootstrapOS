@@ -16,7 +16,7 @@ stdenv.mkDerivation {
     alias cheater-binify="sed 's/[ \t]\+//g' | grep -v '^;' | binify"
   	alias emulate="qemu-system-aarch64 -M raspi4 -nographic -monitor none -kernel"
     alias read-uart="${stdenv.mkDerivation {
-      name = "hello-2.1.221";
+      name = "read-uart11";
       src = ./read-uart;
       buildPhase = ''
         gcc main.c -o read-uart
