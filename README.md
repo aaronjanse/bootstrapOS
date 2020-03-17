@@ -6,7 +6,7 @@ In this Raspberry Pi 4 tutorial, we write a self-hosted compiler in machine code
 
 ### Progress
 
-**Milestone: bootstrap machine code 🎉**  
+**Milestone: bootstrap machine code 🎉**
 - [x] print to qemu uart
 - [x] properly setup uart, wait for write, print 'x'
 - [x] wait for read, read, print uart input
@@ -17,11 +17,11 @@ In this Raspberry Pi 4 tutorial, we write a self-hosted compiler in machine code
 - [x] remove leading whitespace, `;` command for comments
 - [x] print raw binary
 
-**Milestone: big-endian machine code}**  
+**Milestone: big-endian machine code}**
 - [ ] print binary in little-endian form
 - [ ] rewrite code in big-endian form
 
-◊b{Milestone: assembly functions (labeled, linked branching)
+**Milestone: assembly functions (labeled, linked branching)**
 - [ ] var-length binifying
 - [ ] decimal parsing (with negatives; slurp trailing whitespace)
 - [ ] `JUMP`: relative branch with decimal
