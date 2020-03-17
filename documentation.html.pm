@@ -5,7 +5,7 @@ Almost everything you'll need is in the ◊armv8-arm[1 null]{ARMv8 Architecture 
 ◊section[1 null]{Plan}
 
 
-◊b{Milestone: bootstrap machine code}
+◊b{Milestone: bootstrap machine code 🎉}
 ◊check[#true]{print to qemu uart}
 ◊check[#true]{properly setup uart, wait for write, print 'x'}
 ◊check[#true]{wait for read, read, print uart input}
@@ -14,7 +14,7 @@ Almost everything you'll need is in the ◊armv8-arm[1 null]{ARMv8 Architecture 
 ◊check[#true]{use bytes to indicate length of output}
 ◊check[#true]{routine to read a certain number of bits to memory, use it to copy machine code}
 ◊check[#true]{remove leading whitespace, `;` command for comments}
-◊check[#false]{print raw binary}
+◊check[#true]{print raw binary}
 
 ◊b{Milestone: big-endian machine code}
 ◊check[#false]{print binary in little-endian form}
