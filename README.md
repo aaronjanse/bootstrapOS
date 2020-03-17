@@ -19,15 +19,38 @@ In this Raspberry Pi 4 tutorial, we write a self-hosted compiler in machine code
 
 **Milestone: big-endian machine code**
 - [ ] print binary in little-endian form
-- [ ] rewrite code in big-endian form
+- [ ] rewrite codebase in big-endian form
 
-**Milestone: assembly functions (labeled, linked branching)**
+**Milestone: labeled functions and goto (labeled, linked branching)**
 - [ ] var-length binifying
 - [ ] decimal parsing (with negatives; slurp trailing whitespace)
 - [ ] `JUMP`: relative branch with decimal
-- [ ] `L`: function labels (read into memory tape with scheme `pos4 name \0`)
-- [ ] `call`: abs-pos linking branch with label (keep track of current instruction number)
-- [ ] rewrite above routines into functions
+- [ ] `FN`: function labels (read into memory tape with scheme `pos4 name \0`)
+- [ ] `CALL`: abs-pos linking branch with label (keep track of current instruction number)
+- [ ] rewrite codebase to use functions
+- [ ] `L`: label for goto
+- [ ] `GOTO`: goto label
+- [ ] rewrite codebase to use labeled goto
 
+**Milestone: easy for compiler phase to output string**
+- [ ] `OUT`: copy verbatim the rest of the line to out
+- [ ] `OUTLN`: output newline
+- [ ] `UW`: wait for uart writing to be read
+- [ ] `UR`: wait for uart writing to be read
+
+**Milestone: conditional jumping**
+- [ ] `JEQ`
+- [ ] `JNE`
+- [ ] `JGT`
+- [ ] `CMP`
 - [ ] register names
-- [ ] conditional jump
+
+**Milestone: bootstrap assembly**
+- [ ] `SET reg value`: set the value of a register
+- [ ] parse chars (e.g. `'!'`)
+- [ ] `ADD reg reg value`: set the value of a register
+- [ ] `SUB reg reg value`: set the value of a register
+- [ ] `COPY reg reg`: copy the value of one register to another
+- [ ] `LDBR reg reg_mem`: load a byte
+- [ ] `STBR reg reg_mem`: store a byte
+- [ ] `ORR reg reg (reg >>/<< value)`

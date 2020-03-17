@@ -2,6 +2,27 @@
 
 Almost everything you'll need is in the ◊armv8-arm[1 null]{ARMv8 Architecture Reference Manual} and ◊cortex[1 null]{Cortex-72A Processor Technical Reference Manual}. I highly recommend downloading a copy of each PDF. Some of their contents are reproduced below.
 
+◊section[1 null]{Our Languages}
+
+◊table{
+	◊tr{
+		◊th{Term}
+		◊th{Definition}
+	}
+	◊tr{
+		◊td{cortex-72a}
+		◊td{the processor used by the Raspberry Pi 4}
+	}
+	◊tr{
+		◊td{broadcom bcm2711}
+		◊td{same as above, for our purposes (???)}
+	}
+	◊tr{
+		◊td{instruction encoding}
+		◊td{the encoding for translating assembly into machine code}
+	}
+}
+
 ◊section[1 null]{Terminology}
 
 These are the search terms you're looking for.
