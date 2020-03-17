@@ -17,7 +17,7 @@ In this Raspberry Pi 4 tutorial, we write a self-hosted compiler in machine code
 - [x] remove leading whitespace, `;` command for comments
 - [x] print raw binary
 
-**Milestone: big-endian machine code}**
+**Milestone: big-endian machine code**
 - [ ] print binary in little-endian form
 - [ ] rewrite code in big-endian form
 
