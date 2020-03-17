@@ -2,35 +2,6 @@
 
 Almost everything you'll need is in the ◊armv8-arm[1 null]{ARMv8 Architecture Reference Manual} and ◊cortex[1 null]{Cortex-72A Processor Technical Reference Manual}. I highly recommend downloading a copy of each PDF. Some of their contents are reproduced below.
 
-◊section[1 null]{Plan}
-
-
-◊b{Milestone: bootstrap machine code 🎉}
-◊check[#true]{print to qemu uart}
-◊check[#true]{properly setup uart, wait for write, print 'x'}
-◊check[#true]{wait for read, read, print uart input}
-◊check[#true]{write all to memory then dump memory in}
-◊check[#true]{copy mem_in to mem_out then modify above code to print mem_out}
-◊check[#true]{use bytes to indicate length of output}
-◊check[#true]{routine to read a certain number of bits to memory, use it to copy machine code}
-◊check[#true]{remove leading whitespace, `;` command for comments}
-◊check[#true]{print raw binary}
-
-◊b{Milestone: big-endian machine code}
-◊check[#false]{print binary in little-endian form}
-◊check[#false]{rewrite code in big-endian form}
-
-◊b{Milestone: assembly functions (labeled, linked branching)}
-◊check[#false]{var-length binifying}
-◊check[#false]{decimal parsing (with negatives; slurp trailing whitespace)}
-◊check[#false]{`JUMP`: relative branch with decimal}
-◊check[#false]{`L`: function labels (read into memory tape with scheme `pos4 name \0`)}
-◊check[#false]{`call`: abs-pos linking branch with label (keep track of current instruction number)}
-◊check[#false]{rewrite above routines into functions}
-
-◊check[#false]{register names}
-◊check[#false]{conditional jump}
-
 ◊section[1 null]{Terminology}
 
 These are the search terms you're looking for.
