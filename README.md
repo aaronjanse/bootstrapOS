@@ -18,7 +18,7 @@ In this Raspberry Pi 4 tutorial, we write a self-hosted compiler in machine code
 - [x] print raw binary
 
 **Milestone: big-endian machine code**
-- [ ] print binary in little-endian form
+- [x] print binary in little-endian form
 - [ ] rewrite codebase in big-endian form
 
 **Milestone: labeled functions and goto (labeled, linked branching)**
@@ -35,8 +35,8 @@ In this Raspberry Pi 4 tutorial, we write a self-hosted compiler in machine code
 **Milestone: easy for compiler phase to output string**
 - [ ] `OUT`: copy verbatim the rest of the line to out
 - [ ] `OUTLN`: output newline
-- [ ] `UW`: wait for uart writing to be read
-- [ ] `UR`: wait for uart writing to be read
+- [ ] `UW`: wait for uart writing to be ready
+- [ ] `UR`: wait for uart reading to be ready
 
 **Milestone: conditional jumping**
 - [ ] `JEQ`
