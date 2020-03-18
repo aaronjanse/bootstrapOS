@@ -231,21 +231,21 @@ This instruction family copies into a register either a constant or the value of
 ◊section[3 ◊armv8-arm[226 "auto,-4,435"]{pg 226}]{From Constant}
 
 ◊instr{
-1 1 0 1 0 0 1 0 1 hw2 imm16 Rd5
+110100101 hw2 imm16 Rd5
 Rd <= imm << hw*16
 }
 
 ◊section[3 ◊armv8-arm[723 "auto,-4,723"]{pg 723}]{From Register}
 
 ◊codeblock{
-1 0 0 1 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 Rn5 Rd5
+1001000100000000000000 Rn5 Rd5
 (Rd or *SP) <= (Rn or *SP)
 }
 
 ◊section[3 ◊armv8-arm[802 null]{pg 802}]{From System Register}
 
 ◊codeblock{
-1 1 0 1 0 1 0 1 0 0 1 SRn16 Rt5
+11010101001 SRn16 Rt5
 Rt <- SRn
 }
 
@@ -267,7 +267,7 @@ Using constants in logical aarch64 operations can be ◊link["https://news.ycomb
 I won't explain all of these here, but know that ◊code{xor} is also known as ◊code{eor}.
 
 ◊codeblock{
-1 opc2 0 1 0 1 0 0 shift1 0 Rm5 uimm6 Rn5 Rd5
+1 opc2 010100 shift1 0 Rm5 uimm6 Rn5 Rd5
 out = Rn # Rm
 Rd <= shift ? (out >> uimm) : (out << uimm)
 }
@@ -305,7 +305,7 @@ Rd <= shift ? (out >> uimm) : (out << uimm)
 ◊section[3 ◊armv8-arm[531 "auto,-4,730"]{pg 531}]{Add, immediate}
 
 ◊codeblock{
-1 0 0 1 0 0 0 1 0 shift1 uimm12 Rn5 Rd5
+100100010 shift1 uimm12 Rn5 Rd5
 Rd <= Rn + (uimm << (shift ? 12 : 0))
 }
 
@@ -324,8 +324,7 @@ Rd <= Rn + (uimm << (shift ? 12 : 0))
 ◊section[3 ◊armv8-arm[961 "auto,-4,723"]{pg 961}]{Sub}
 
 ◊codeblock{
-1 1 0 0 1 0 1 1 shift2 0 Rm5 uimm6 Rn5 Rd5
-1 1 0 0 1 0 1 1 00 0 Rm5 000000 Rn5 Rd5
+11001011 shift2 0 Rm5 uimm6  Rn5 Rd5
 Rd <= Rn - Rm
 }
 
@@ -333,7 +332,7 @@ Rd <= Rn - Rm
 ◊section[3 null]{Sub, immediate}
 
 ◊codeblock{
-1 1 0 1 0 0 0 1 0 shift1 uimm12 Rn5 Rd5
+110100010 shift1 uimm12 Rn5 Rd5
 Rd <= Rn - (uimm << (shift ? 12 : 0))
 }
 
@@ -345,14 +344,14 @@ Rd <= Rn - (uimm << (shift ? 12 : 0))
 ◊section[3 ◊armv8-arm[901 "auto,-4,387"]{pg ???}]{Store}
 
 ◊codeblock{
-1 0 1 1 1 0 0 0 0 0 0 imm9 0 0 Rn5 Rt5
+10111000000 imm9 00 Rn5 Rt5
 *(Rn + imm) <= (Rt or SP)
 }
 
 ◊section[3 ◊armv8-arm[702 "auto,-4,295"]{pg 702}]{Store Byte}
 
 ◊codeblock{
-0 0 1 1 1 0 0 1 0 0 imm12 Rn5 Rt5
+0011100100 imm12 Rn5 Rt5
 Rt <= *(Rn + imm)
 }
 
@@ -373,7 +372,7 @@ LOAD BYTE https://static.docs.arm.com/ddi0487/ca/DDI0487C_a_armv8_arm.pdf#page=7
 ◊section[3 ◊armv8-arm[702 "auto,-4,295"]{pg 702}]{Load Byte}
 
 ◊codeblock{
-0 0 1 1 1 0 0 1 0 1 imm12 Rn5 Rt5
+0011100101 imm12 Rn5 Rt5
 Rt <= *(Rn + imm)
 }
 
@@ -381,7 +380,7 @@ Rt <= *(Rn + imm)
 
 
 ◊codeblock{
-1 1 1 1 1 0 0 0 0 1 0 imm9 0 0 Rn5 Rt5
+11111000010 imm9 00 Rn5 Rt5
 Rt <= *(Rn + imm)
 }
 
@@ -406,7 +405,7 @@ This is how you'll jump around the source code, which allows us to implement fun
 ◊section[3 ◊armv8-arm[594 "auto,-4,730"]{pg 594}]{Compare}
 
 ◊codeblock{
-1 1 1 1 1 0 1 0 0 1 0 Rm5 1 1 1 1 0 0 Rn5 0 0 0 0 0
+11111010010 Rm5 111100 Rn5 00000
 Rn ? Rm
 }
 
@@ -415,7 +414,7 @@ Compares Rn to Rm. Used before a conditional jump.
 ◊section[3 ◊armv8-arm[228 "auto,-4,317"]{pg 228}]{Conditional Jump}
 
 ◊codeblock{
-0 1 0 1 0 1 0 0 imm19 0 cond4
+01010100 imm19 0 cond4
 }
 
 ◊code{imm} is a signed constant that specificies how many instructions forward/backwards the processor should jump.

@@ -17,14 +17,13 @@ In this Raspberry Pi 4 tutorial, we write a self-hosted compiler in machine code
 - [x] remove leading whitespace, `;` command for comments
 - [x] print raw binary
 
-**Milestone: big-endian machine code**
+**Milestone: big-endian machine code 🎉**
 - [x] print binary in little-endian form
-- [ ] rewrite codebase in big-endian form
+- [x] rewrite codebase in big-endian form (ehh, leave most formatting for later)
 
 **Milestone: labeled functions and goto (labeled, linked branching)**
-- [ ] var-length binifying
-- [ ] decimal parsing (with negatives; slurp trailing whitespace)
-- [ ] `JUMP`: relative branch with decimal
+- [ ] `JUMP`: relative branch with decimal (var-length binify that decimal)
+- [ ] `JUMP`: support negative decimals
 - [ ] `FN`: function labels (read into memory tape with scheme `pos4 name \0`)
 - [ ] `CALL`: abs-pos linking branch with label (keep track of current instruction number)
 - [ ] rewrite codebase to use functions
