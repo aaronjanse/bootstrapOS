@@ -231,8 +231,8 @@ This instruction family copies into a register either a constant or the value of
 ◊section[3 ◊armv8-arm[226 "auto,-4,435"]{pg 226}]{From Constant}
 
 ◊instr{
-110100101 hw2 imm16 Rd5
 Rd <= imm << hw*16
+110100101 hw2 imm16               Rd5
 }
 
 ◊section[3 ◊armv8-arm[723 "auto,-4,723"]{pg 723}]{From Register}
@@ -344,8 +344,8 @@ Rd <= Rn - (uimm << (shift ? 12 : 0))
 ◊section[3 ◊armv8-arm[901 "auto,-4,387"]{pg ???}]{Store}
 
 ◊codeblock{
-10111000000 imm9 00 Rn5 Rt5
 *(Rn + imm) <= (Rt or SP)
+10111000000 imm9        00 Rn5   Rt5
 }
 
 ◊section[3 ◊armv8-arm[702 "auto,-4,295"]{pg 702}]{Store Byte}
@@ -393,7 +393,7 @@ This is how you'll jump around the source code, which allows us to implement fun
 ◊section[3 ◊armv8-arm[233 "auto,-4,495"]{pg 233}]{Unconditional Jump}
 
 ◊codeblock{
-0 0 0 1 0 1 imm26
+000101 imm26
 }
 
 ◊code{imm} is a signed constant that specificies how many instructions forward/backwards the processor should jump.
@@ -405,8 +405,8 @@ This is how you'll jump around the source code, which allows us to implement fun
 ◊section[3 ◊armv8-arm[594 "auto,-4,730"]{pg 594}]{Compare}
 
 ◊codeblock{
-11111010010 Rm5 111100 Rn5 00000
 Rn ? Rm
+11111010010 Rm5   111100   Rn5   00000
 }
 
 Compares Rn to Rm. Used before a conditional jump.

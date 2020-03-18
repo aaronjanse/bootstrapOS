@@ -22,14 +22,15 @@ In this Raspberry Pi 4 tutorial, we write a self-hosted compiler in machine code
 - [x] rewrite codebase in big-endian form (ehh, leave most formatting for later)
 
 **Milestone: labeled functions and goto (labeled, linked branching)**
-- [ ] `JUMP`: relative branch with decimal (var-length binify that decimal)
-- [ ] `JUMP`: support negative decimals
+- [ ] `J`: relative branch with decimal (var-length binify that decimal)
+- [ ] `J`: support negative decimals
 - [ ] `FN`: function labels (read into memory tape with scheme `pos4 name \0`)
 - [ ] `CALL`: abs-pos linking branch with label (keep track of current instruction number)
 - [ ] rewrite codebase to use functions
 - [ ] `L`: label for goto
 - [ ] `GOTO`: goto label
 - [ ] rewrite codebase to use labeled goto
+- [ ] `RET`: return after function call; rewrite codebase
 
 **Milestone: easy for compiler phase to output string**
 - [ ] `OUT`: copy verbatim the rest of the line to out
@@ -38,10 +39,10 @@ In this Raspberry Pi 4 tutorial, we write a self-hosted compiler in machine code
 - [ ] `UR`: wait for uart reading to be ready
 
 **Milestone: conditional jumping**
-- [ ] `JEQ`
-- [ ] `JNE`
-- [ ] `JGT`
-- [ ] `CMP`
+- [ ] `BEQ`
+- [ ] `BNE`
+- [ ] `BGT`
+- [ ] `BMP`
 - [ ] register names
 
 **Milestone: bootstrap assembly**
