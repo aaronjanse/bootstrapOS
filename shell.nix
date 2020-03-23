@@ -1,4 +1,6 @@
-with import <nixpkgs> {};
+{ nixpkgs ? import ./nix/nixpkgs.nix }:
+
+with import nixpkgs {};
 
 stdenv.mkDerivation {
   name = "os-book-shell";
@@ -10,23 +12,26 @@ stdenv.mkDerivation {
       inherit (darwin.stubs) rez setfile;
       python = python3;
     })
-  ];
-  shellHook = ''
-    alias binify="( echo 'obase=16;ibase=2' ; tr '\n' ' ' | sed 's/ //g' | sed -Ee 's/[01]{4}/;\0\n/g' ; echo ) | bc | tr '\n' ' ' | sed 's/ //g' | sed 's/\([0-9A-F]\{2\}\)/\\\\\\\\\\x\1/gI' | xargs printf"
-    alias cheater-binify="sed 's/[ \t]\+//g' | grep -v '^;' | binify"
-  	alias emulate="qemu-system-aarch64 -M raspi4 -nographic -monitor none -kernel"
-    alias read-uart="${stdenv.mkDerivation {
+    (stdenv.mkDerivation {
       name = "read-uart";
-      version = "1.0.0";
+      version = "1.1.2";
       src = ./read-uart;
       buildPhase = ''
-        gcc main.c -o read-uart
+        mkdir build
+        gcc decode.c -o build/decode
+        gcc compile-using.c -g -o build/compile-using
       '';
       installPhase = ''
         mkdir -p $out/bin
-        cp read-uart $out/bin
+        cp build/* $out/bin
       '';
-    }}/bin/read-uart"
+    })
+  ];
+  shellHook = ''
+    alias binify="( echo 'obase=16;ibase=2' ; tr '\n' ' ' | sed 's/ //g' | sed -Ee 's/[01]{4}/;\0\n/g' ; echo ) | bc | tr '\n' ' ' | sed 's/ //g' | sed 's/\([0-9A-F]\{2\}\)/\\\\\\\\\\x\1/gI' | xargs printf"
+    alias compile-machine-code="sed 's/[ \t]\+//g' | grep -v '^;' | sed 's/\([01]\{8\}\)\([01]\{8\}\)\([01]\{8\}\)\([01]\{8\}\)/\4\3\2\1/g' | binify"
+    alias emulate-debug="qemu-system-aarch64 -M raspi4 -nographic -serial mon:stdio -monitor telnet::45454,server,nowait -kernel"
+  	alias emulate="qemu-system-aarch64 -M raspi4 -nographic -monitor none -kernel"
     alias deasm="aarch64-none-elf-objdump -D -maarch64 -b binary"
   '';
 

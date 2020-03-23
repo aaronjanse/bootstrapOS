@@ -22,13 +22,15 @@ In this Raspberry Pi 4 tutorial, we write a self-hosted compiler in machine code
 - [x] rewrite codebase in big-endian form (ehh, leave most formatting for later)
 
 **Milestone: labeled functions and goto (labeled, linked branching)**
+- [x] `J`: relative branch with binary
+- [x] `L`: label for goto (read into memory tape with scheme `pos4 name \0`)
+- [ ] `GOTO`: goto label
+
 - [ ] `J`: relative branch with decimal (var-length binify that decimal)
 - [ ] `J`: support negative decimals
 - [ ] `FN`: function labels (read into memory tape with scheme `pos4 name \0`)
 - [ ] `CALL`: abs-pos linking branch with label (keep track of current instruction number)
 - [ ] rewrite codebase to use functions
-- [ ] `L`: label for goto
-- [ ] `GOTO`: goto label
 - [ ] rewrite codebase to use labeled goto
 - [ ] `RET`: return after function call; rewrite codebase
 

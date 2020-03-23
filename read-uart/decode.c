@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 int main(int argc, char *argv[]) {
-	FILE *f = fopen(argv[1], "rb");
+	FILE *f = fopen(stdin, "rb");
 
 	unsigned long bytes = 0;
 	bytes = bytes << 8; bytes += fgetc(f);
