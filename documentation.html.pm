@@ -238,8 +238,8 @@ Rd <= imm << hw*16
 ◊section[3 ◊armv8-arm[723 "auto,-4,723"]{pg 723}]{From Register}
 
 ◊codeblock{
-1001000100000000000000 Rn5 Rd5
 (Rd or *SP) <= (Rn or *SP)
+1001000100000000000000 Rn5   Rd5
 }
 
 ◊section[3 ◊armv8-arm[802 null]{pg 802}]{From System Register}
@@ -305,8 +305,8 @@ Rd <= shift ? (out >> uimm) : (out << uimm)
 ◊section[3 ◊armv8-arm[531 "auto,-4,730"]{pg 531}]{Add, immediate}
 
 ◊codeblock{
-100100010 shift1 uimm12 Rn5 Rd5
 Rd <= Rn + (uimm << (shift ? 12 : 0))
+100100010 shift1 uimm12         Rn5   Rd5
 }
 
 ◊table{
@@ -332,8 +332,8 @@ Rd <= Rn - Rm
 ◊section[3 null]{Sub, immediate}
 
 ◊codeblock{
-110100010 shift1 uimm12 Rn5 Rd5
 Rd <= Rn - (uimm << (shift ? 12 : 0))
+100100010 shift1 uimm12              Rn5   Rd5
 }
 
 ◊section[2 null]{Memory Operations}
@@ -372,8 +372,8 @@ LOAD BYTE https://static.docs.arm.com/ddi0487/ca/DDI0487C_a_armv8_arm.pdf#page=7
 ◊section[3 ◊armv8-arm[702 "auto,-4,295"]{pg 702}]{Load Byte}
 
 ◊codeblock{
-0011100101 imm12 Rn5 Rt5
 Rt <= *(Rn + imm)
+0011100101 imm12          Rn5   Rt5
 }
 
 ◊section[3 ◊armv8-arm[769 "auto,-4,731"]{pg 769}]{Load}

@@ -26,6 +26,8 @@ aarch64-none-elf-objdump -D -b binary -maarch64 /tmp/x.img
 
 qemu-system-aarch64 -M raspi4 -nographic -serial mon:stdio -monitor telnet::45454,server,nowait -kernel /tmp/x
 
+deasm /tmp/x | awk '{$1=$2=""; print $0}' | sed 's/ \/\/.\+//g' | sed 's/^[ \t]\+//g' | tail -n +8
+
 Note that, for now, we're manually removing comments and whitespace (instead of using `sed`/`grep` to do so). That's intentional. One of the first compiler functionalities we'll implement will be automatically removing comments and whitespace from a file then parsing the 1s and 0s.
 
 ◊section[1 null]{The Plan}
