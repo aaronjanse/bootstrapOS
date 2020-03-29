@@ -1,8 +1,8 @@
 # bootstrapOS
 
-Many OS tutorials start in assembly or C++. Weak sauce.
+Many OS tutorials start in assembly or C++. We start in machine code.
 
-In this Raspberry Pi 4 tutorial, we write a self-hosted compiler in machine code. We then evolve that compiler (by implementing new features then using those features in the compiler source code) into something capable of wrangling a high-level language. Finally, in our high-level language, where most tutorials start, we write a simple web server to one day host the tutorial's own documentation.
+In this Raspberry Pi 4 tutorial, we'll write a self-hosted assembler in machine code. We'll then evolve that compiler (by implementing new features then using those features in the compiler source code) into something capable of wrangling a high-level language. Finally, in our high-level language, where most tutorials start, we'll write a simple web server to one day host the tutorial's own documentation.
 
 ### Progress
 
