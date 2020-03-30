@@ -16,6 +16,8 @@ https://www.bell-labs.com/usr/dmr/www/chist.html
 
 Fermentation is similar to building compilers. New languages are written with old languages.
 
+https://en.wikipedia.org/wiki/ALGOL#/media/File:Algol&Fortran_family-by-Borkowski.svg
+
 1. [Algol 60 was extended][algol-to-aed] to create the language AED.
 2. [AED was used][aed-to-bcpl] to write the first BCPL compiler.
 3. BCPL was used to create the first B compiler
@@ -132,4 +134,18 @@ https://github.com/Chadderz121/csud
 
 https://github.com/rsta2/circle/blob/master/lib/bcm54213.cpp
 https://en.wikipedia.org/wiki/Media-independent_interface#Reduced_gigabit_media-independent_interface
+
+## AST
+
+expression → literal
+           | unary
+           | binary
+           | grouping ;
+
+literal    → INT | HEX | CHAR | "false" | "true" ;
+grouping   → "(" expression ")" ;
+unary      → ( "-" | "!" ) expression ;
+binary     → expression operator expression ;
+operator   → "==" | "!=" | "<" | "<=" | ">" | ">="
+           | "+"  | "-"  | "*" | "/" ;
 

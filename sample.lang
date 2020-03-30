@@ -1,0 +1,69 @@
+#def BIN_EXPR 4
+; 0 type = ?
+; 1 oper
+; 2 left_ptr
+; 3 right_ptr
+
+#def HEX
+; 0 type = ?
+; 1 value
+
+#def FUNC
+; 0 type = ?
+; 1 num_statements
+; 2 statements_pair_ptr
+
+#def OBJ_PAIR
+; 0 type = ?
+; 1 left_ptr
+; 2 right_ptr
+
+#def OBJ_PAIR_END
+; 0 type = ?
+
+#def ASSIGNMENT
+; 0 type = ?
+; 1 var_ptr
+; 2 value_ptr
+
+#def VAR_LOCAL
+; 0 type = ?
+; 1 idx
+
+#def VAR_PARAM
+; 0 type = ?
+; 1 idx
+
+#def VAR_GLOBAL
+; 0 type = ?
+; 1 idx
+
+fn fibonacci :: n {
+  if n < 2 {
+    return n;
+  } else {
+    return fibonacci(n - 1) + fibonacci(n - 2);
+  }
+}
+
+fn multiply :: a b {
+  var sum = 0;
+  loop {
+    sum = sum + b;
+    a = a - 1;
+    if a == 0 {
+      return sum;
+    }
+  }
+}
+
+; assumes a null-terminated string
+fn get_str_len :: str_ptr {
+  var pos = 0;
+  loop {
+    if str_ptr[pos] == 0 {
+      return pos;
+    }
+    pos = pos + 1;
+  }
+}

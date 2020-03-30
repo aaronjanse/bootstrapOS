@@ -166,7 +166,7 @@ fn removeComments {
 		if commentMode {
 			continue
 		}
-		if char != '0' && char != '1'currentNum {
+		if char != '0' && char != '1' {
 			continue
 		}
 		currentNum = currentNum << 1

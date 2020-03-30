@@ -27,9 +27,10 @@ Sources:
 - evolve into stack language
 
 Stack language notes:
-- I could have a `load` command that pops an address off the top of the stack and push the corresponding value in memory. Same applies to `store`, but with two items off the top of the stack.
+- I could have a `load` command that pops an address off the top of the stack and push the corresponding value in memory. Same applies to `store`, but with two items off the top of the stack (the address needs to be at very top with value below)
 - needs global variables??
 ; - or, do a `pop memory` command with a `pop address` command
+- needs `push global {n}` and `pop global {n}`
 
 High-level implementation notes:
 - needed stacks:
@@ -51,9 +52,18 @@ Initial high-level language limitations:
 - no variable name shadowing
 - assumption that user identifiers won't collide with generated identifiers (maybe?)
 
+
+```
+fn compile a b {
+  
+}
+
+
+```
+
 ```
 ; fn multiply a b {
-fn multiply 2
+func multiply 2 ; (2 is the number of locals (just count number of `var`s))
 
 ;   var out = 0;
 push constant 0
@@ -67,7 +77,7 @@ pop local 1
 label whileStart
 
 ;     out = out + a;
-push local 0 ; push *(fn_base_sp+0)
+push local 0
 push param 0
 add?
 pop local 0
