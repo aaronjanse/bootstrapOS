@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 
-png(file = "loc-stats.png", width=6.25,height=6.25,units="in",res=500)
+png(file = "loc-stats.png", width=6.25,height=6.25,units="in",res=200)
 
 input <- file('stdin', 'r')
 data <- readLines(input)

@@ -109,7 +109,7 @@ In this Raspberry Pi 4 tutorial, we'll write a self-hosted assembler in machine 
 
 # Lines of code over time
 
-![./loc-stats.png]
+![lines of code](./loc-stats.png)
 
 ```
 for f in ./os/*.txt; do wc -l $f; done | Rscript bar-gen.R ; feh ./loc-stats.png
