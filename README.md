@@ -27,10 +27,13 @@ In this Raspberry Pi 4 tutorial, we'll write a self-hosted assembler in machine 
 - [x] `GOTO`: goto label
 - [x] rewrite codebase using labeled GOTOs 
 
-**Milestone: conditional goto**
+**Milestone: conditional goto 🎉**
 - [x] `GOEQ`
 - [x] `GONE`
-- [ ] `GOGT`
+- [x] `GOGT`
+- [x] `GOLT`
+- [x] `GOGE`
+- [x] `GOLE`
 - [x] rewrite codebase using conditional goto
 
 **Milestone: labeled functions**
