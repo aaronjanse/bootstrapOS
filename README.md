@@ -28,10 +28,10 @@ In this Raspberry Pi 4 tutorial, we write a self-hosted compiler in machine code
 - [x] rewrite codebase using labeled GOTOs 
 
 **Milestone: conditional goto**
-- [ ] `GOEQ`
-- [ ] `GONE`
+- [x] `GOEQ`
+- [x] `GONE`
 - [ ] `GOGT`
-- [ ] rewrite codebase using conditional goto
+- [x] rewrite codebase using conditional goto
 
 **Milestone: labeled functions**
 - [ ] `CALL`: "goto" but with linked branching
