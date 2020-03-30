@@ -37,7 +37,7 @@ In this Raspberry Pi 4 tutorial, we'll write a self-hosted assembler in machine 
 - [x] rewrite codebase using conditional goto
 
 **Milestone: labeled functions**
-- [ ] `CALL`: "goto" but with linked branching
+- [x] `CALL`: "goto" but with linked branching
 - [ ] `RET`: return after function call
 - [ ] rewrite codebase
 
@@ -97,3 +97,20 @@ In this Raspberry Pi 4 tutorial, we'll write a self-hosted assembler in machine 
 - [ ] conditional blocks
 - [ ] loops
 - [ ] break from loops
+
+---
+
+- [ ] refactor circle library's ethernet driver
+- [ ] rewrite ethernet driver in our high-level language
+- [ ] TCP/IP stack
+- [ ] http server
+- [ ] serve multiple files
+- [ ] preemptive multitasking
+
+# Lines of code over time
+
+![./loc-stats.png]
+
+```
+for f in ./os/*.txt; do wc -l $f; done | Rscript bar-gen.R ; feh ./loc-stats.png
+```

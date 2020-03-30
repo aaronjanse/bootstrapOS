@@ -396,6 +396,13 @@ This is how you'll jump around the source code, which allows us to implement fun
 000101 imm26
 }
 
+https://static.docs.arm.com/ddi0487/ca/DDI0487C_a_armv8_arm.pdf#page=841&zoom=auto,-4,730
+◊section[3 ◊armv8-arm[233 "auto,-4,495"]{pg 233}]{Return}
+
+◊codeblock{
+1101011001011111000000 11110 00000
+}
+
 ◊code{imm} is a signed constant that specificies how many instructions forward/backwards the processor should jump.
 
 ◊delete{
