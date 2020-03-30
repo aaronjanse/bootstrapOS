@@ -38,21 +38,62 @@ In this Raspberry Pi 4 tutorial, we'll write a self-hosted assembler in machine 
 
 **Milestone: labeled functions**
 - [ ] `CALL`: "goto" but with linked branching
-- [ ] rewrite codebase to use functions
-- [ ] `RET`: return after function call; rewrite codebase
+- [ ] `RET`: return after function call
+- [ ] rewrite codebase
 
-**Milestone: easy for compiler phase to output string**
-- [ ] `OUT`: copy verbatim the rest of the line to out
-- [ ] `OUTLN`: output newline
-- [ ] `UW`: wait for uart writing to be ready
-- [ ] `UR`: wait for uart reading to be ready
+**Milestone: emitting strings**
+- [ ] `EMIT string`: macro for series of `MOV reg char` and `CALL emit` with escape sequence support
+- [ ] rewrite codebase
 
 **Milestone: bootstrap assembly**
-- [ ] `SET reg value`: set the value of a register
-- [ ] parse chars (e.g. `'!'`)
-- [ ] `ADD reg reg value`: set the value of a register
-- [ ] `SUB reg reg value`: set the value of a register
-- [ ] `COPY reg reg`: copy the value of one register to another
-- [ ] `LDBR reg reg_mem`: load a byte
-- [ ] `STBR reg reg_mem`: store a byte
+- [ ] `MOV reg hex`
+- [ ] `MOV reg char` (with escape sequences)
+- [ ] `MOV reg dec`
+- [ ] `MOV reg reg`
+- [ ] `ADD reg reg [reg/value]`: set the value of a register
+- [ ] `SUB reg reg [reg/value]`: set the value of a register
+- [ ] `LDB reg reg_mem offset`: load a byte
+- [ ] `STB reg reg_mem offset`: store a byte
 - [ ] `ORR reg reg (reg >>/<< value)`
+- [ ] `AND reg reg (reg >>/<< value)`
+
+**Milestone: stack-lang functions**
+- [ ] `.func [name] [num locals]`
+- [ ] `.call [name]`
+
+**Milestone: push, pop, and dup**
+- [ ] `.push constant [val]`
+- [ ] `.dup`
+
+- [ ] `.pop local [idx]`
+- [ ] `.push local [idx]`
+
+- [ ] `.pop param [idx]`
+- [ ] `.push param [idx]`
+
+- [ ] `.pop global [idx]`
+- [ ] `.push global [idx]`
+
+
+**Milestone: stack-lang memory access**
+- [ ] `.load` (..., addr) -> (..., val)
+- [ ] `.store` (..., val, addr) -> (...)
+
+**Milestone: arithmetic**
+- [ ] `.add`
+- [ ] `.sub`
+
+**Milestone: heap allocation**
+- [ ] `malloc` stack function (..., num bytes) -> (..., addr)
+
+**Milestone: parsing and compiling**
+- [ ] constants
+- [ ] unary operations
+- [ ] binomial operations
+- [ ] global variable declarations
+- [ ] basic functions (with goto for `fn main`)
+- [ ] function calling and parameters
+- [ ] local variables
+- [ ] conditional blocks
+- [ ] loops
+- [ ] break from loops
