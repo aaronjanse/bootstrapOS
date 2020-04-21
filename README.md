@@ -36,18 +36,18 @@ In this Raspberry Pi 4 tutorial, we'll write a self-hosted assembler in machine 
 - [x] `GOLE`
 - [x] rewrite codebase using conditional goto
 
-**Milestone: labeled functions**
+**Milestone: labeled functions 🎉**
 - [x] `CALL`: "goto" but with linked branching
-- [ ] `RET`: return after function call
-- [ ] rewrite codebase
+- [x] rewrite codebase
 
 **Milestone: emitting strings**
+- [ ] `MOV reg char`
 - [ ] `EMIT string`: macro for series of `MOV reg char` and `CALL emit` with escape sequence support
 - [ ] rewrite codebase
 
 **Milestone: bootstrap assembly**
+- [ ] `RET`: return after function call
 - [ ] `MOV reg hex`
-- [ ] `MOV reg char` (with escape sequences)
 - [ ] `MOV reg dec`
 - [ ] `MOV reg reg`
 - [ ] `ADD reg reg [reg/value]`: set the value of a register
