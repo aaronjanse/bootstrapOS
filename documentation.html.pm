@@ -302,6 +302,11 @@ Rd <= shift ? (out >> uimm) : (out << uimm)
 
 ◊section[3 ◊armv8-arm[533 "auto,-4,733"]{pg 533}]{Add}
 
+◊codeblock{
+Rd <= Rn + (shift ? (Rm >> uimm) : (Rm << uimm))
+10001011 shift1 0 Rm5   uimm6   Rn5   Rd5
+}
+
 ◊section[3 ◊armv8-arm[531 "auto,-4,730"]{pg 531}]{Add, immediate}
 
 ◊codeblock{
@@ -324,8 +329,8 @@ Rd <= Rn + (uimm << (shift ? 12 : 0))
 ◊section[3 ◊armv8-arm[961 "auto,-4,723"]{pg 961}]{Sub}
 
 ◊codeblock{
-11001011 shift2 0 Rm5 uimm6  Rn5 Rd5
 Rd <= Rn - Rm
+11001011 shift2 0 Rm5 uimm6  Rn5 Rd5
 }
 
 
@@ -334,6 +339,21 @@ Rd <= Rn - Rm
 ◊codeblock{
 Rd <= Rn - (uimm << (shift ? 12 : 0))
 100100010 shift1 uimm12              Rn5   Rd5
+}
+
+https://static.docs.arm.com/ddi0487/ca/DDI0487C_a_armv8_arm.pdf#page=194&zoom=auto,-6,761
+
+◊section[3 ◊armv8-arm[531 "auto,-4,730"]{pg 531}]{Mul}
+
+◊codeblock{
+Rd <= Rn * Rm
+10011011000 Rm5 011111 Rn5 Rd5
+}
+
+◊section[3 ◊armv8-arm[531 "auto,-4,730"]{pg 531}]{Mul, immediate}
+https://static.docs.arm.com/ddi0487/ca/DDI0487C_a_armv8_arm.pdf#page=808&zoom=auto,-6,731
+◊codeblock{
+Rd <= Rn * Rm
 }
 
 ◊section[2 null]{Memory Operations}

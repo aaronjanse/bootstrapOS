@@ -5,7 +5,7 @@ import re
 
 print("digraph g {")
 
-branchPattern = re.compile(r"^b(?:\...)? 0x([0-9a-f]+)")
+branchPattern = re.compile(r"^bl?(?:\...)? 0x([0-9a-f]+)")
 
 lines = [line.strip() for line in sys.stdin]
 
@@ -20,6 +20,8 @@ for line in lines:
     destPos = int(destPos, 16)//4
     splits.append(pos)
     splits.append(destPos-1)
+  if line.startswith("ret"):
+    splits.append(pos)
   pos += 1
 
 splits.sort()
@@ -42,8 +44,9 @@ for i, block in enumerate(blocks):
 
   match = branchPattern.match(block[-1])
   if match:
-    if i < len(blocks) - 1 and match.group(0).startswith('b.'):
+    if i < len(blocks) - 1 and (match.group(0).startswith('b.') or match.group(0).startswith('bl')):
       print("a{} -> a{}".format(i, i+1))
+
 
     destPos = match.group(0).split(' ')[1]
     destPos = int(destPos, 16)//4
@@ -54,10 +57,13 @@ for i, block in enumerate(blocks):
       if currentDestPos + len(b) < destPos:
         destBlockIdx += 1
         currentDestPos += len(b)
+      elif match.group(0)[1] == 'l':
+        print("a{} -> a{} [color=green, dir=both]".format(i, destBlockIdx+1))
+        break
       else:
         print("a{} -> a{} [color=blue]".format(i, destBlockIdx+1))
         break
-  elif i < len(blocks) - 1:
+  elif i < len(blocks) - 1 and not block[-1].startswith('ret'):
     print("a{} -> a{}".format(i, i+1))
 
 

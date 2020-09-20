@@ -1,5 +1,7 @@
 GOTO END_OF_FUNC_DEFS
 
+
+
 L FN_PRINT
 
   ; move 0x20 (1<<5) into r0
@@ -65,7 +67,7 @@ L FN_VAR_LEN_BINIFY
   ; 100010110 shift1 0 Rm5   uimm6   Rn5   Rd5
     100010110 0      0 00011 00 0000 01101 01101
 
-  ; # loop
+  L FN_VAR_LEN_BINIFY_loop
 
     ; r13 <= r13 - 1
     ; Rd <= Rn - (uimm << (shift ? 12 : 0))
@@ -113,10 +115,7 @@ L FN_VAR_LEN_BINIFY
     ; 1 1 1 1 1 0 1 0 0 1 0 Rm5 1 1 1 1 0 0 Rn5 0 0 0 0 0
     11111010 01011111 11110000 01100000
 
-    ; if not equal, jump back 8 instructions
-    ; imm = -8 ; cond = 0001
-    ; 01010100 imm19                   0 cond4
-      01010100 111 1111 1111 1111 1000 0 0001
+  GONE FN_VAR_LEN_BINIFY_loop
 
   ; r13 <= r13 + r0
   ; Rd <= Rn + (shift ? Rm >> uimm : Rm << uimm)
@@ -126,6 +125,102 @@ L FN_VAR_LEN_BINIFY
   ; return
   1101011001011111000000 11110 00000
 
+
+
+; parse int string, store into r3
+; scratch: r0, r1, r2
+L FN_PARSE_INT
+
+  ; set r3 to zero
+  ; R3 <= 0 << 0*16
+  ; Rd <= imm << hw*16
+  ; 110100101 hw2 imm16               Rd5
+    110100101 00  0000 0000 0000 0000 00011
+
+  L FN_PARSE_INT_loop
+
+    ; load byte *r12 into r2
+    ; Rt <= *(Rn + imm)
+    ; 0011100101 imm12          Rn5   Rt5
+      0011100101 0000 0000 0000 01100 00010
+
+    ; set r1 to ' ' (0x20)
+    ; r2 <= 0x21 << 0*16
+    ; Rd <= imm << hw*16
+    ; 110100101 hw2 imm16               Rd5
+      110100101 00  0000 0000 0010 0000 00001
+
+    ; compare r1 to r2
+    ; r1 ? r2
+    ; Rn ? Rm
+    ; 11111010010 Rm5   111100 Rn5   00000
+      11111010010 00010 111100 00001 00000
+
+    GONE FN_PARSE_INT_accumulate
+
+    ; set r1 to '\n' (0xa)
+    ; 1 1 0 1 0 0 1 0 1 hw2 imm16 Rd5
+    ; Rd <= imm << hw*16
+    ; r2 <= 0x21 << 0*16
+    11010010 10000000 00000001 01000001
+
+    ; compare r1 to r2
+    ; r1 ? r2
+    ; Rn ? Rm
+    ; 11111010010 Rm5   111100 Rn5   00000
+      11111010010 00010 111100 00001 00000
+
+    GONE FN_PARSE_INT_accumulate
+
+      ; return
+      1101011001011111000000 11110 00000
+
+    L FN_PARSE_INT_accumulate
+
+      ; add 1 to r12
+      ; Rd <= Rn + (uimm << (shift ? 12 : 0))
+      ; 100100010 shift1 uimm12         Rn5   Rd5
+        100100010 0      0000 0000 0001 01100 01100
+
+      ; subtract '0' (0x30) from r2
+      ; Rd <= Rn - (uimm << (shift ? 12 : 0))
+      ; 110100010 shift1 uimm12         Rn5   Rd5
+        110100010 0      0000 0011 0000 01100 01100
+
+      ; set r1 to 10
+      ; 110100101 hw2 imm16 Rd5
+      ; Rd <= imm << hw*16
+
+      ; r3 <= r3 * r1
+      ; Rd <= Rn * Rm
+      ; 10011011000 Rm5   011111 Rn5   Rd5
+        10011011000 00001 011111 00011 00011
+
+      ; r3 <= r3 + r2
+      ; Rd <= Rn + (shift ? (Rm >> uimm) : (Rm << uimm))
+      ; 10001011 shift1 0 Rm5   uimm6   Rn5   Rd5
+        10001011 0      0 00010 00 0000 00011 00011
+
+  GOTO FN_PARSE_INT_loop
+
+; parse contents inside single quotes, store into r3
+; scratch: r0, r1, r2
+L FN_PARSE_CHAR
+
+  ; load byte *r12 into r3
+  ; Rt <= *(Rn + imm)
+  ; 0011100101 imm12          Rn5   Rt5
+    0011100101 0000 0000 0000 01100 00011
+
+  ; add 1 to r12
+  ; Rd <= Rn + (uimm << (shift ? 12 : 0))
+  ; 100100010 shift1 uimm12         Rn5   Rd5
+    100100010 0      0000 0000 0001 01100 01100
+
+  ; # TODO: implement escape sequences
+
+  ; return
+  1101011001011111000000 11110 00000
 
 
 
@@ -1382,6 +1477,330 @@ L ML_compiler_loop
           110100101 00  0000 0000 0001 1010 00011
 
   L ML_endOfJumpRoutine
+
+  ; # 'MOV'
+
+  ; set r1 to 'M' (0x4d)
+  ; R1 <= 0x47 << 0*16
+  ; Rd <= imm << hw*16
+  ; 110100101 hw2 imm16               Rd5
+    110100101 00  0000 0000 0100 1101 00001
+
+  ; compare r2 to r1
+  ; Rn ? Rm
+  ; 11111010010 Rm5   111100   Rn5   00000
+    11111010010 00001 111100   00010 00000
+
+  GONE ML_endOfMovRoutine
+
+    ; add 5 to r12
+    ; Rd <= Rn + (uimm << (shift ? 12 : 0))
+    ; 100100010 shift1 uimm12         Rn5   Rd5
+      100100010 0      0000 0000 0101 01100 01100
+
+    CALL FN_PARSE_INT
+
+    ; copy r3 into r5
+    ; (Rd or *SP) <= (Rn or *SP)
+    ; 1001000100000000000000 Rn5   Rd5
+      1001000100000000000000 00011 00101
+
+    ; add 2 to r12
+    ; Rd <= Rn + (uimm << (shift ? 12 : 0))
+    ; 100100010 shift1 uimm12         Rn5   Rd5
+      100100010 0      0000 0000 0001 01100 01100
+
+    ; load byte *r12 into r2
+    ; Rt <= *(Rn + imm)
+    ; 0011100101 imm12          Rn5   Rt5
+      0011100101 0000 0000 0000 01100 00010
+
+    ; add 1 to r12
+    ; Rd <= Rn + (uimm << (shift ? 12 : 0))
+    ; 100100010 shift1 uimm12         Rn5   Rd5
+      100100010 0      0000 0000 0001 01100 01100
+
+    ; # char value
+
+      ; set r1 to `'` (single quote; 0x27)
+      ; R1 <= 0x27 << 0*16
+      ; Rd <= imm << hw*16
+      ; 110100101 hw2 imm16               Rd5
+        110100101 00  0000 0000 0010 0111 00001
+
+      ; compare r1 to r2
+      ; 1 1 1 1 1 0 1 0 0 1 0 Rm5 1 1 1 1 0 0 Rn5 0 0 0 0 0
+      ; Rn ? Rm
+      ; r1 ? r2
+      11111010 01000010 11110000 00100000
+
+
+      GONE ML_MovRoutine_notSingleQuote
+
+        CALL FN_PARSE_CHAR
+
+        ; copy r3 into r4
+        ; (Rd or *SP) <= (Rn or *SP)
+        ; 1001000100000000000000 Rn5   Rd5
+          1001000100000000000000 00011 00100
+
+        ; # move past closing quote
+
+          ; add 1 to r12
+          ; Rd <= Rn + (uimm << (shift ? 12 : 0))
+          ; 100100010 shift1 uimm12         Rn5   Rd5
+            100100010 0      0000 0000 0001 01100 01100
+
+      L ML_MovRoutine_notSingleQuote
+
+    ; # emit '11010010100'
+
+      ; # emit '1'
+
+        ; set r2 to '1' (0x31)
+        ; r2 <= 0x31 << 0*16
+        ; Rd <= imm << hw*16
+        ; 110100101 hw2 imm16               Rd5
+          110100101 00  0000 0000 0011 0001 00010
+
+        ; store byte r2 into *r13
+        ; *(r13 + 0) <= r2
+        ; *(Rn + imm) <= Rt
+        ; 0011100100 imm12          Rn5   Rt5
+          0011100100 0000 0000 0000 01101 00010
+
+        ; add 0x1 to r13
+        ; r13 <= r13 + (0x1 << (0 ? 12 : 0))
+        ; Rd <= Rn + (uimm << (shift ? 12 : 0))
+        ; 100100010 shift1 uimm12         Rn5   Rd5
+          100100010 0      0000 0000 0001 01101 01101
+
+      ; # emit '1'
+
+        ; set r2 to '1' (0x31)
+        ; r2 <= 0x31 << 0*16
+        ; Rd <= imm << hw*16
+        ; 110100101 hw2 imm16               Rd5
+          110100101 00  0000 0000 0011 0001 00010
+
+        ; store byte r2 into *r13
+        ; *(r13 + 0) <= r2
+        ; *(Rn + imm) <= Rt
+        ; 0011100100 imm12          Rn5   Rt5
+          0011100100 0000 0000 0000 01101 00010
+
+        ; add 0x1 to r13
+        ; r13 <= r13 + (0x1 << (0 ? 12 : 0))
+        ; Rd <= Rn + (uimm << (shift ? 12 : 0))
+        ; 100100010 shift1 uimm12         Rn5   Rd5
+          100100010 0      0000 0000 0001 01101 01101
+
+      ; # emit '0'
+
+        ; set r2 to '0' (0x30)
+        ; r2 <= 0x30 << 0*16
+        ; Rd <= imm << hw*16
+        ; 110100101 hw2 imm16               Rd5
+          110100101 00  0000 0000 0011 0000 00010
+
+        ; store byte r2 into *r13
+        ; *(r13 + 0) <= r2
+        ; *(Rn + imm) <= Rt
+        ; 0011100100 imm12          Rn5   Rt5
+          0011100100 0000 0000 0000 01101 00010
+
+        ; add 0x1 to r13
+        ; r13 <= r13 + (0x1 << (0 ? 12 : 0))
+        ; Rd <= Rn + (uimm << (shift ? 12 : 0))
+        ; 100100010 shift1 uimm12         Rn5   Rd5
+          100100010 0      0000 0000 0001 01101 01101
+
+      ; # emit '1'
+
+        ; set r2 to '1' (0x31)
+        ; r2 <= 0x31 << 0*16
+        ; Rd <= imm << hw*16
+        ; 110100101 hw2 imm16               Rd5
+          110100101 00  0000 0000 0011 0001 00010
+
+        ; store byte r2 into *r13
+        ; *(r13 + 0) <= r2
+        ; *(Rn + imm) <= Rt
+        ; 0011100100 imm12          Rn5   Rt5
+          0011100100 0000 0000 0000 01101 00010
+
+        ; add 0x1 to r13
+        ; r13 <= r13 + (0x1 << (0 ? 12 : 0))
+        ; Rd <= Rn + (uimm << (shift ? 12 : 0))
+        ; 100100010 shift1 uimm12         Rn5   Rd5
+          100100010 0      0000 0000 0001 01101 01101
+
+      ; # emit '0'
+
+        ; set r2 to '0' (0x30)
+        ; r2 <= 0x30 << 0*16
+        ; Rd <= imm << hw*16
+        ; 110100101 hw2 imm16               Rd5
+          110100101 00  0000 0000 0011 0000 00010
+
+        ; store byte r2 into *r13
+        ; *(r13 + 0) <= r2
+        ; *(Rn + imm) <= Rt
+        ; 0011100100 imm12          Rn5   Rt5
+          0011100100 0000 0000 0000 01101 00010
+
+        ; add 0x1 to r13
+        ; r13 <= r13 + (0x1 << (0 ? 12 : 0))
+        ; Rd <= Rn + (uimm << (shift ? 12 : 0))
+        ; 100100010 shift1 uimm12         Rn5   Rd5
+          100100010 0      0000 0000 0001 01101 01101
+
+      ; # emit '0'
+
+        ; set r2 to '0' (0x30)
+        ; r2 <= 0x30 << 0*16
+        ; Rd <= imm << hw*16
+        ; 110100101 hw2 imm16               Rd5
+          110100101 00  0000 0000 0011 0000 00010
+
+        ; store byte r2 into *r13
+        ; *(r13 + 0) <= r2
+        ; *(Rn + imm) <= Rt
+        ; 0011100100 imm12          Rn5   Rt5
+          0011100100 0000 0000 0000 01101 00010
+
+        ; add 0x1 to r13
+        ; r13 <= r13 + (0x1 << (0 ? 12 : 0))
+        ; Rd <= Rn + (uimm << (shift ? 12 : 0))
+        ; 100100010 shift1 uimm12         Rn5   Rd5
+          100100010 0      0000 0000 0001 01101 01101
+
+      ; # emit '1'
+
+        ; set r2 to '1' (0x31)
+        ; r2 <= 0x31 << 0*16
+        ; Rd <= imm << hw*16
+        ; 110100101 hw2 imm16               Rd5
+          110100101 00  0000 0000 0011 0001 00010
+
+        ; store byte r2 into *r13
+        ; *(r13 + 0) <= r2
+        ; *(Rn + imm) <= Rt
+        ; 0011100100 imm12          Rn5   Rt5
+          0011100100 0000 0000 0000 01101 00010
+
+        ; add 0x1 to r13
+        ; r13 <= r13 + (0x1 << (0 ? 12 : 0))
+        ; Rd <= Rn + (uimm << (shift ? 12 : 0))
+        ; 100100010 shift1 uimm12         Rn5   Rd5
+          100100010 0      0000 0000 0001 01101 01101
+
+      ; # emit '0'
+
+        ; set r2 to '0' (0x30)
+        ; r2 <= 0x30 << 0*16
+        ; Rd <= imm << hw*16
+        ; 110100101 hw2 imm16               Rd5
+          110100101 00  0000 0000 0011 0000 00010
+
+        ; store byte r2 into *r13
+        ; *(r13 + 0) <= r2
+        ; *(Rn + imm) <= Rt
+        ; 0011100100 imm12          Rn5   Rt5
+          0011100100 0000 0000 0000 01101 00010
+
+        ; add 0x1 to r13
+        ; r13 <= r13 + (0x1 << (0 ? 12 : 0))
+        ; Rd <= Rn + (uimm << (shift ? 12 : 0))
+        ; 100100010 shift1 uimm12         Rn5   Rd5
+          100100010 0      0000 0000 0001 01101 01101
+
+      ; # emit '1'
+
+        ; set r2 to '1' (0x31)
+        ; r2 <= 0x31 << 0*16
+        ; Rd <= imm << hw*16
+        ; 110100101 hw2 imm16               Rd5
+          110100101 00  0000 0000 0011 0001 00010
+
+        ; store byte r2 into *r13
+        ; *(r13 + 0) <= r2
+        ; *(Rn + imm) <= Rt
+        ; 0011100100 imm12          Rn5   Rt5
+          0011100100 0000 0000 0000 01101 00010
+
+        ; add 0x1 to r13
+        ; r13 <= r13 + (0x1 << (0 ? 12 : 0))
+        ; Rd <= Rn + (uimm << (shift ? 12 : 0))
+        ; 100100010 shift1 uimm12         Rn5   Rd5
+          100100010 0      0000 0000 0001 01101 01101
+
+      ; # emit '0'
+
+        ; set r2 to '0' (0x30)
+        ; r2 <= 0x30 << 0*16
+        ; Rd <= imm << hw*16
+        ; 110100101 hw2 imm16               Rd5
+          110100101 00  0000 0000 0011 0000 00010
+
+        ; store byte r2 into *r13
+        ; *(r13 + 0) <= r2
+        ; *(Rn + imm) <= Rt
+        ; 0011100100 imm12          Rn5   Rt5
+          0011100100 0000 0000 0000 01101 00010
+
+        ; add 0x1 to r13
+        ; r13 <= r13 + (0x1 << (0 ? 12 : 0))
+        ; Rd <= Rn + (uimm << (shift ? 12 : 0))
+        ; 100100010 shift1 uimm12         Rn5   Rd5
+          100100010 0      0000 0000 0001 01101 01101
+
+      ; # emit '0'
+
+        ; set r2 to '0' (0x30)
+        ; r2 <= 0x30 << 0*16
+        ; Rd <= imm << hw*16
+        ; 110100101 hw2 imm16               Rd5
+          110100101 00  0000 0000 0011 0000 00010
+
+        ; store byte r2 into *r13
+        ; *(r13 + 0) <= r2
+        ; *(Rn + imm) <= Rt
+        ; 0011100100 imm12          Rn5   Rt5
+          0011100100 0000 0000 0000 01101 00010
+
+        ; add 0x1 to r13
+        ; r13 <= r13 + (0x1 << (0 ? 12 : 0))
+        ; Rd <= Rn + (uimm << (shift ? 12 : 0))
+        ; 100100010 shift1 uimm12         Rn5   Rd5
+          100100010 0      0000 0000 0001 01101 01101
+
+    ; # emit imm16
+
+      ; set r3 to 16
+      ; Rd <= imm << hw*16
+      ; 110100101 hw2 imm16               Rd5
+        110100101 00  0000 0000 0001 0000 00011
+
+      CALL FN_VAR_LEN_BINIFY
+
+    ; # emit register
+
+      ; set r3 to 5
+      ; Rd <= imm << hw*16
+      ; 110100101 hw2 imm16               Rd5
+        110100101 00  0000 0000 0000 0101 00011
+
+      ; copy r5 into r4
+      ; (Rd or *SP) <= (Rn or *SP)
+      ; 1001000100000000000000 Rn5   Rd5
+        1001000100000000000000 00101 00100
+
+      CALL FN_VAR_LEN_BINIFY
+
+    GOTO endOfMLBitCopierRoutine
+
+  L ML_endOfMovRoutine
 
   ; # 'GOTO'
 
@@ -2976,10 +3395,9 @@ L ML_compiler_loop
       10010001 00000000 00000101 10001100
 
       ; subtract 0x30 from r2
-      ; 1 1 0 1 0 0 0 1 0 shift1 uimm12 Rn5 Rd5
-      ; Rd <= Rn - (uimm << (shift ? 12 : 0))
       ; r2 <= r2 - (1 << (0 ? 12 : 0))
-      ; 1 1 0 1 0 0 0 1 0 0 0000 0011 0000 00010 00010
+      ; Rd <= Rn - (uimm << (shift ? 12 : 0))
+      ; 1 1 0 1 0 0 0 1 0 shift1 uimm12 Rn5 Rd5
       11010001 00000000 11000000 01000010
 
       ; r3 <= r2 | (r3 << 1)
