@@ -107,7 +107,7 @@ In this Raspberry Pi 4 tutorial, we'll write a self-hosted assembler in machine 
 - [ ] serve multiple files
 - [ ] preemptive multitasking
 
-# Lines of code over time
+### Lines of code over time
 
 ![lines of code](./loc-stats.png)
 
